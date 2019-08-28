@@ -1,0 +1,105 @@
+{
+  "name": "async-react-router2",
+  "version": "0.0.1",
+  "description": "Client side react router with async. It like next.js!",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "npm run build:module && npm run build:submodule",
+    "build:module": "rimraf dist && cross-env NODE_ENV=production rollup -c build/rollup.config.js",
+    "build:submodule": "rimraf ssr && cross-env NODE_ENV=production babel src/submodules/ssr -d ssr/",
+    "lint": "eslint ./src/*/**/*.{ts,tsx}",
+    "lint:fix": "eslint --fix ./src/*/**/*.{ts,tsx}",
+    "prepare": "npm run build",
+    "test": "jest",
+    "coverage": "npm test -- --coverage",
+    "report": "nyc report --reporter=html",
+    "commit": "git-cz"
+  },
+  "files": [
+    "lib",
+    "ssr"
+  ],
+  "peerDependencies": {
+    "react": "^15.0.0 || ^16.0.0",
+    "rxjs": "^6.0.0"
+  },
+  "dependencies": {
+    "history": "^4.7.2",
+    "path-to-regexp": "^2.4.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "7.0.0",
+    "@babel/core": "7.0.1",
+    "@babel/plugin-transform-runtime": "^7.0.0",
+    "@babel/preset-env": "7.0.0",
+    "@babel/preset-react": "7.0.0",
+    "@babel/preset-typescript": "^7.3.3",
+    "@babel/register": "7.0.0",
+    "@babel/runtime": "7.0.0",
+    "@types/enzyme": "^3.10.3",
+    "@types/enzyme-adapter-react-16": "^1.0.5",
+    "@types/history": "^4.7.2",
+    "@types/jest": "^24.0.15",
+    "@types/react": "^16.8.23",
+    "@types/react-dom": "^16.8.4",
+    "@typescript-eslint/eslint-plugin": "^2.0.0",
+    "@typescript-eslint/parser": "^2.0.0",
+    "ajv": "^6.5.3",
+    "babel-eslint": "^9.0.0",
+    "babel-plugin-dynamic-import-node": "^2.1.0",
+    "babel-plugin-istanbul": "^5.0.1",
+    "browser-env": "^3.2.5",
+    "commitizen": "^4.0.3",
+    "coveralls": "^3.0.2",
+    "cross-env": "^5.2.0",
+    "cz-conventional-changelog": "^2.1.0",
+    "enzyme": "^3.6.0",
+    "enzyme-adapter-react-16": "^1.5.0",
+    "eslint": "^5.6.0",
+    "eslint-config-prettier": "^6.1.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-prettier": "^3.1.0",
+    "husky": "^1.0.0-rc.13",
+    "jest": "^24.8.0",
+    "nyc": "13.0.1",
+    "prettier": "^1.18.2",
+    "react": "^16.5.1",
+    "react-dom": "^16.5.1",
+    "react-test-renderer": "^16.5.1",
+    "rimraf": "^2.6.2",
+    "rollup": "^0.65.2",
+    "rollup-plugin-babel": "^4.0.3",
+    "rollup-plugin-filesize": "^4.0.1",
+    "rollup-plugin-node-resolve": "^3.4.0",
+    "rxjs": "^6.3.2",
+    "sinon": "^6.3.3",
+    "typescript": "^3.5.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/oneut/async-react-router.git"
+  },
+  "keywords": [
+    "react",
+    "router",
+    "next.js",
+    "async"
+  ],
+  "author": "onetu",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/oneut/async-react-router/issues"
+  },
+  "homepage": "https://github.com/oneut/async-react-router#readme",
+  "config": {
+    "commitizen": {
+      "path": "node_modules/cz-conventional-changelog"
+    }
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run lint",
+      "pre-push": "npm run lint && npm test"
+    }
+  }
+}
