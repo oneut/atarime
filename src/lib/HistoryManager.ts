@@ -1,9 +1,15 @@
-import {History, Location} from "history";
+import { History, Location } from "history";
 
-type HistoryCallbackInterface = (pathname: string, callback: () => void) => void
+type HistoryCallbackInterface = (
+  pathname: string,
+  callback: () => void
+) => void;
 
 export interface HistoryManagerInterface {
-  newInstance(history: History, historyCallback: HistoryCallbackInterface): HistoryManagerInterface
+  newInstance(
+    history: History,
+    historyCallback: HistoryCallbackInterface
+  ): HistoryManagerInterface;
   changeSilent(): void;
   changeUnsilent(): void;
   listen(): void;
@@ -18,7 +24,13 @@ export class HistoryManager implements HistoryManagerInterface {
   private readonly historyCallback: HistoryCallbackInterface;
   private silent: boolean;
 
-  constructor(history: History, historyCallbackInterface: HistoryCallbackInterface = (pathname: string, callback: () => void) => {} ) {
+  constructor(
+    history: History,
+    historyCallbackInterface: HistoryCallbackInterface = (
+      pathname: string,
+      callback: () => void
+    ) => {}
+  ) {
     this.history = history;
     this.historyCallback = historyCallbackInterface;
     this.silent = false;

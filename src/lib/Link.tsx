@@ -1,15 +1,15 @@
 import * as React from "react";
-import {Request} from "./Request";
+import { Request } from "./Request";
 
 interface LinkType {
-  to: string
-  className?: string
+  to: string;
+  className?: string;
 }
 
 interface InternalLinkType {
-  to: string
-  request: Request
-  className?: string
+  to: string;
+  request: Request;
+  className?: string;
 }
 
 class Link extends React.Component<InternalLinkType> {
@@ -33,8 +33,10 @@ class Link extends React.Component<InternalLinkType> {
   }
 }
 
-export function createLink(request: Request): React.FunctionComponent<LinkType> {
-  return (props: LinkType) => {
+export function createLink(
+  request: Request
+): React.FunctionComponent<LinkType> {
+  return function LinkHoC(props: LinkType) {
     return <Link request={request} {...props} />;
   };
 }

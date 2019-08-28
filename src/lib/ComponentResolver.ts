@@ -1,28 +1,28 @@
 import * as React from "react";
-import {Renderer} from "./Renderer";
+import { Renderer } from "./Renderer";
 
 export class ComponentResolver {
-    private component?: React.ComponentType;
+  private component?: React.ComponentType;
 
-    constructor() {
-        this.component = undefined;
-    }
+  constructor() {
+    this.component = undefined;
+  }
 
-    setComponentFromRenderer(renderer: Renderer) {
-        this.setComponentFromElement(renderer.getComponent());
-    }
+  setComponentFromRenderer(renderer: Renderer) {
+    this.setComponentFromElement(renderer.getComponent());
+  }
 
-    setComponentFromElement(reactElement: React.ReactElement) {
-        this.setComponent(() => {
-            return reactElement;
-        });
-    }
+  setComponentFromElement(reactElement: React.ReactElement) {
+    this.setComponent(() => {
+      return reactElement;
+    });
+  }
 
-    setComponent(component: React.ComponentType) {
-        this.component = component;
-    }
+  setComponent(component: React.ComponentType) {
+    this.component = component;
+  }
 
-    getComponent() {
-        return this.component;
-    }
+  getComponent() {
+    return this.component;
+  }
 }

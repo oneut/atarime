@@ -5,36 +5,36 @@ export type PageType<R = {}, I = {}> = Page<Route<R>, I>;
 export type PageClass<R = {}, I = {}> = new (route: R) => PageType<R, I>;
 
 export class Route<P> {
-    _route: any;
-    params: P;
-    pathname: string;
+  _route: any;
+  params: P;
+  pathname: string;
 
-    constructor(params: P, pathname: string) {
-        this.params = params;
-        this.pathname = pathname;
-    }
+  constructor(params: P, pathname: string) {
+    this.params = params;
+    this.pathname = pathname;
+  }
 }
 
-type RouteType<P = {}> = Route<P>
+type RouteType<P = {}> = Route<P>;
 
 export abstract class Page<R extends RouteType, InitialProps extends {}> {
-    protected route: R;
+  protected route: R;
 
-    constructor(route: R) {
-        this.route = route;
-    }
+  constructor(route: R) {
+    this.route = route;
+  }
 
-    public initialPropsWillGet() {
+  public initialPropsWillGet() {
+    // do nothing.
+  }
 
-    }
+  async getInitialProps(): Promise<InitialProps | {}> {
+    return {};
+  }
 
-    async getInitialProps(): Promise<InitialProps | {}> {
-        return {};
-    }
+  public initialPropsDidGet(initialProps: InitialProps) {
+    // do nothing.
+  }
 
-    public initialPropsDidGet(initialProps: InitialProps) {
-
-    }
-
-    abstract component(initialProps: InitialProps): React.ReactElement;
+  abstract component(initialProps: InitialProps): React.ReactElement;
 }

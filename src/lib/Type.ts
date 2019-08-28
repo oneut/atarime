@@ -1,1 +1,1 @@
-type NominalTyping<K, T> = K & { __identity: T }
+type NominalTyping<K, T> = K & { __identity: T };

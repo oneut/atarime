@@ -4,7 +4,7 @@ import {
   createMemoryHistory
 } from "history";
 import { Link, Request, URL, connector } from "./lib/Facade";
-import {Router} from "./lib/Router";
+import { Router } from "./lib/Router";
 // import * as SSR from "./ssr";
 
 function createRouter(history = createHashHistory()) {
@@ -18,6 +18,6 @@ export {
   createMemoryHistory,
   Link,
   Request,
-  URL,
+  URL
   // SSR
 };
