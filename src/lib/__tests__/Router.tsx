@@ -29,7 +29,7 @@ test("Rendering", (done) => {
     }
 
     component(initialProps: InitialProps) {
-      return <IndexComponent message={initialProps.message}/>;
+      return <IndexComponent message={initialProps.message} />;
     }
   }
 
@@ -43,7 +43,7 @@ test("Rendering", (done) => {
 
   router.route("/", IndexPage);
   router.run(async (RootComponent) => {
-    const actual = mount(<RootComponent/>);
+    const actual = mount(<RootComponent />);
     const expected = mount(
       React.createElement(IndexComponent, { message: "world" })
     );
@@ -72,7 +72,7 @@ test("Rendering with first component", async (done) => {
     }
 
     component(initialProps: InitialProps) {
-      return <IndexComponent message={initialProps.message}/>;
+      return <IndexComponent message={initialProps.message} />;
     }
   }
 
@@ -88,15 +88,15 @@ test("Rendering with first component", async (done) => {
   router.runWithFirstComponent(FirstPage, async (Root) => {
     // The Router use RxJS to control async/await.
     // So, First Rendering is null.
-    const mountedActual = mount(<Root/>);
-    const firstExpected = mount(<FirstPage/>);
+    const mountedActual = mount(<Root />);
+    const firstExpected = mount(<FirstPage />);
     expect(mountedActual.html()).toBe(firstExpected.html());
 
     // wait to resolve promise.
     await asyncFlush();
 
     mountedActual.update();
-    const expected = mount(<IndexComponent message={"world"}/>);
+    const expected = mount(<IndexComponent message={"world"} />);
     expect(mountedActual.html()).toBe(expected.html());
     expect.assertions(2);
     done();
@@ -124,7 +124,7 @@ test("Rendering with initial props", (done) => {
     }
 
     component(initialProps: InitialProps) {
-      return <IndexComponent items={initialProps.items}/>;
+      return <IndexComponent items={initialProps.items} />;
     }
   }
 
@@ -163,7 +163,7 @@ test("Rendering with initial props", (done) => {
 test("Match single route", (done) => {
   class IndexPage extends Page<Route<{}>, {}> {
     component() {
-      return <IndexComponent/>;
+      return <IndexComponent />;
     }
   }
 
@@ -177,8 +177,8 @@ test("Match single route", (done) => {
 
   router.route("/", IndexPage);
   router.run(async (RootComponent) => {
-    const actual = mount(<RootComponent/>);
-    const expected = mount(<IndexComponent/>);
+    const actual = mount(<RootComponent />);
+    const expected = mount(<IndexComponent />);
     expect(actual.html()).toBe(expected.html());
     done();
   });
@@ -197,7 +197,7 @@ test("Next rendering from Request `to`", (done) => {
     }
 
     component(initialProps: InitialProps) {
-      return <IndexComponent message={initialProps.message}/>;
+      return <IndexComponent message={initialProps.message} />;
     }
   }
 
@@ -226,7 +226,7 @@ test("Next rendering from Request `to`", (done) => {
     }
 
     component(initialProps: NextInitialProps) {
-      return <NextComponent nextMessage={initialProps.nextMessage}/>;
+      return <NextComponent nextMessage={initialProps.nextMessage} />;
     }
   }
 
@@ -271,7 +271,7 @@ test("Next rendering from Request `to`", (done) => {
 
 test("Async route", async (done) => {
   interface InitialProps {
-    message: string
+    message: string;
   }
 
   class DynamicImportPage extends Page<Route<{}>, InitialProps> {
@@ -282,7 +282,7 @@ test("Async route", async (done) => {
     }
 
     component(initialProps: InitialProps) {
-      return <Component message={initialProps.message}/>;
+      return <Component message={initialProps.message} />;
     }
   }
 
@@ -290,13 +290,15 @@ test("Async route", async (done) => {
     return <div>{props.message}</div>;
   };
 
-  const router = new Router(connector.newInitializedInstance(createMemoryHistory()));
+  const router = new Router(
+    connector.newInitializedInstance(createMemoryHistory())
+  );
 
   // Use promise instead of dynamic import
   router.asyncRoute("/", () => Promise.resolve(DynamicImportPage));
   router.run(async (RootComponent) => {
     const actual = mount(React.createElement(RootComponent));
-    const expected = mount(<Component message={"Dynamic import"}/>);
+    const expected = mount(<Component message={"Dynamic import"} />);
     expect(actual.html()).toBe(expected.html());
     done();
   });

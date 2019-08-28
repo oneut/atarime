@@ -18,8 +18,12 @@ export class Router {
       .addRoute(path, Promise.resolve(routeClass), name);
   }
 
-  asyncRoute(path: string, asyncRouteClass: Promise<PageClass>, name?: string) {
-    this.connector.getRouteMatcher().addRoute(path, asyncRouteClass, name);
+  asyncRoute(
+    path: string,
+    asyncPageFunction: () => Promise<PageClass>,
+    name?: string
+  ) {
+    this.connector.getRouteMatcher().addRoute(path, asyncPageFunction(), name);
   }
 
   // @todo
