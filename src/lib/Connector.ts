@@ -52,7 +52,18 @@ export class Connector {
     return connector;
   }
 
-  createStream() {
+  request(pathname: string, callback: () => void = () => {}) {
+    this.stream.next({
+      pathname: pathname,
+      callback: callback
+    });
+  }
+
+  subscribe(onStateChange: () => void) {
+    this.onStateChange = onStateChange;
+  }
+
+  private createStream() {
     const stream = new Subject<RequestType>();
     stream
       .pipe(
@@ -72,16 +83,5 @@ export class Connector {
       });
 
     return stream;
-  }
-
-  subscribe(onStateChange: () => void) {
-    this.onStateChange = onStateChange;
-  }
-
-  request(pathname: string, callback: () => void = () => {}) {
-    this.stream.next({
-      pathname: pathname,
-      callback: callback
-    });
   }
 }
