@@ -1,13 +1,5 @@
 import { Connector } from "./Connector";
 
-function normalizeTo(to: string) {
-  if (to[0] === "#") {
-    return to.substr(1);
-  }
-
-  return to;
-}
-
 export class Request {
   private readonly connector: Connector;
 
@@ -16,7 +8,7 @@ export class Request {
   }
 
   to(to: string, callback: () => void = () => {}) {
-    this.connector.getHistoryManager().push(normalizeTo(to), callback);
+    this.connector.getHistoryManager().push(this.normalizeTo(to), callback);
   }
 
   name(name: string, parameters: any = {}, callback: () => void = () => {}) {
@@ -29,5 +21,13 @@ export class Request {
   isActive(pathname: string) {
     const location = this.connector.getHistoryManager().getLocation();
     return location.pathname === pathname;
+  }
+
+  normalizeTo(to: string) {
+    if (to[0] === "#") {
+      return to.substr(1);
+    }
+
+    return to;
   }
 }
