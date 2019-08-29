@@ -69,7 +69,7 @@ export class RouteMatcher implements RouteMatcherInterface {
     return Promise.resolve(null);
   }
 
-  compileByName(name: string, parameters: { [key: string]: any }) {
+  compileByName(name: string, parameters: { [key: string]: any } = {}) {
     if (!this.nameRoutes[name]) {
       throw Error(`Route Name "${name}" did not match Path.`);
     }
