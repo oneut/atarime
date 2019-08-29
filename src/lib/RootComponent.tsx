@@ -28,6 +28,6 @@ export class RootComponent<P extends RootProps> extends React.Component<
       return null;
     }
 
-    return React.createElement(component, { ...this.props });
+    return React.createElement(component);
   }
 }
