@@ -234,8 +234,10 @@ test("Next rendering from Request `to`", (done) => {
     return <div>Hello, {props.nextMessage}</div>;
   };
 
-  const newConnector = connector.newInitializedInstance(createMemoryHistory());
-  const router = new Router(newConnector);
+  const initializedConnector = connector.newInitializedInstance(
+    createMemoryHistory()
+  );
+  const router = new Router(initializedConnector);
 
   router.route("/", IndexPage);
   router.route("/next", NextPage);
@@ -251,7 +253,7 @@ test("Next rendering from Request `to`", (done) => {
     await asyncFlush();
 
     // next rendering
-    newConnector.request("/next");
+    initializedConnector.request("/next");
 
     // wait to resolve promise.
     await asyncFlush();
