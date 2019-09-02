@@ -28,7 +28,8 @@ test("Add route & Create renderer", async (done) => {
   if (!renderer) return;
   // Fire default callback.
   expect(renderer.fireRequestCallback()).toBeInstanceOf(Renderer);
-  const actual = mount(renderer.getComponent());
+  const component = renderer.getComponent();
+  const actual = mount(React.createElement(component));
   const expected = mount(React.createElement(IndexComponent));
   expect(actual.html()).toBe(expected.html());
   expect.assertions(3);
@@ -55,7 +56,8 @@ test("Create renderer with request callback", async (done) => {
   });
   expect(renderer).not.toBeUndefined();
   if (!renderer) return;
-  const actual = mount(renderer.getComponent());
+  const component = renderer.getComponent();
+  const actual = mount(React.createElement(component));
   const expected = mount(React.createElement(IndexComponent));
   expect(actual.html()).toBe(expected.html());
   expect(renderer.fireRequestCallback()).toBeInstanceOf(Renderer);
@@ -104,7 +106,8 @@ test("Create renderer with dynamic routing", async (done) => {
   const renderer = await routeMatcher.createRenderer("/1/Jack");
   expect(renderer).not.toBeUndefined();
   if (!renderer) return;
-  const actual = mount(renderer.getComponent());
+  const component = renderer.getComponent();
+  const actual = mount(React.createElement(component));
   const expected = mount(React.createElement(IndexComponent));
   expect(actual.html()).toBe(expected.html());
   expect.assertions(4);

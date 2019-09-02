@@ -9,13 +9,7 @@ export class ComponentResolver {
   }
 
   setComponentFromRenderer(renderer: Renderer) {
-    this.setComponentFromElement(renderer.getComponent());
-  }
-
-  setComponentFromElement(reactElement: React.ReactElement) {
-    this.setComponent(() => {
-      return reactElement;
-    });
+    this.setComponent(renderer.getComponent());
   }
 
   setComponent(component: React.ComponentType) {

@@ -12,7 +12,9 @@ export class Renderer {
   }
 
   getComponent() {
-    return this.page.component(this.getComponentProps());
+    return () => {
+      return this.page.component(this.getComponentProps());
+    };
   }
 
   getComponentProps() {
