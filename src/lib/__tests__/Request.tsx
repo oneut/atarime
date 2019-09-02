@@ -17,8 +17,9 @@ beforeEach(() => {
 test("to", () => {
   MockedHistoryManager.mockImplementation((): any => {
     return {
-      push: (pathname: string) => {
+      push: (pathname: string, callback: () => void) => {
         expect(pathname).toBe("/test");
+        callback();
       }
     };
   });
@@ -64,8 +65,9 @@ test("to with callback", () => {
 test("name", () => {
   MockedHistoryManager.mockImplementation((): any => {
     return {
-      push: (pathname: string) => {
+      push: (pathname: string, callback: () => void) => {
         expect(pathname).toBe("/");
+        callback();
       }
     };
   });
@@ -90,6 +92,43 @@ test("name", () => {
   const request = new Request(connector);
   request.name("Index");
   expect.assertions(1);
+});
+
+test("name with callback", () => {
+  MockedHistoryManager.mockImplementation((): any => {
+    return {
+      push: (pathname: string, callback: () => void) => {
+        expect(pathname).toBe("/");
+        callback();
+      }
+    };
+  });
+
+  const connector = new Connector(
+    new MockedHistoryManager(),
+    new RouteMatcher(),
+    new ComponentResolver()
+  );
+
+  class IndexPage extends Page<Route<{}>, {}> {
+    component(initialProps: {}) {
+      return <div>Hello, World.</div>;
+    }
+  }
+
+  connector
+    .getRouteMatcher()
+    .addRoute("/", Promise.resolve(IndexPage), "Index");
+
+  // Request test
+  const request = new Request(connector);
+  const checkRequestCallback = jest.fn();
+  request.name("Index", {}, () => {
+    checkRequestCallback();
+  });
+
+  expect(checkRequestCallback).toHaveBeenCalled();
+  expect.assertions(2);
 });
 
 test("isActive", (done) => {
