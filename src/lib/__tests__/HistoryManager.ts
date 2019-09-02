@@ -2,7 +2,9 @@ import { HistoryManager } from "../HistoryManager";
 import { createMemoryHistory } from "history";
 
 test("New Instance", () => {
-  const historyCallback = (pathname: string, callback: () => void) => {};
+  const historyCallback = (pathname: string, callback: () => void) => {
+    callback();
+  };
   const historyManager = new HistoryManager(
     createMemoryHistory(),
     historyCallback
@@ -17,6 +19,7 @@ test("Change silent", () => {
   const mockHistoryCallbackFn = jest.fn();
   const historyCallback = (pathname: string, callback: () => void) => {
     mockHistoryCallbackFn();
+    callback();
   };
   const historyManager = new HistoryManager(
     createMemoryHistory(),
@@ -39,6 +42,7 @@ test("Change unsilent", () => {
   const mockHistoryCallbackFn = jest.fn();
   const historyCallback = (pathname: string, callback: () => void) => {
     mockHistoryCallbackFn();
+    callback();
   };
   const historyManager = new HistoryManager(
     createMemoryHistory(),
@@ -93,6 +97,7 @@ test("Listen", () => {
   const mockHistoryCallbackFn = jest.fn();
   const historyCallback = (pathname: string, callback: () => void) => {
     mockHistoryCallbackFn();
+    callback();
   };
 
   const memoryHistory = createMemoryHistory();
@@ -107,7 +112,9 @@ test("Listen", () => {
 test("Create href", () => {
   const historyManager = new HistoryManager(
     createMemoryHistory(),
-    (pathname: string, callback: () => void) => {}
+    (pathname: string, callback: () => void) => {
+      callback();
+    }
   );
 
   expect(historyManager.createHref("/test")).toBe("/test");
@@ -117,7 +124,9 @@ test("Create href", () => {
 test("Get location", () => {
   const historyManager = new HistoryManager(
     createMemoryHistory(),
-    (pathname: string, callback: () => void) => {}
+    (pathname: string, callback: () => void) => {
+      callback();
+    }
   );
 
   historyManager.push("/test");
