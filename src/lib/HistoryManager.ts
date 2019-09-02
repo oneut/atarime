@@ -26,13 +26,13 @@ export class HistoryManager implements HistoryManagerInterface {
 
   constructor(
     history: History,
-    historyCallbackInterface: HistoryCallbackInterface = (
+    historyCallback: HistoryCallbackInterface = (
       pathname: string,
       callback: () => void
     ) => {}
   ) {
     this.history = history;
-    this.historyCallback = historyCallbackInterface;
+    this.historyCallback = historyCallback;
     this.silent = false;
   }
 
