@@ -1,4 +1,4 @@
-import { InitialPropsRunner } from "./runner/InitialPropsRunner";
+import { InitialPropsLoadRunner } from "./runner/InitialPropsLoadRunner";
 import { FirstComponentLoadRunner } from "./runner/FirstComponentLoadRunner";
 import { LoadRunner } from "./runner/LoadRunner";
 import { Connector } from "./Connector";
@@ -36,7 +36,7 @@ export class Router {
     initialProps: any,
     callback: (Root: React.FunctionComponent<{}>) => void
   ) {
-    const runner = new InitialPropsRunner(this.connector, initialProps);
+    const runner = new InitialPropsLoadRunner(this.connector, initialProps);
     runner.run(callback);
   }
 

@@ -6,7 +6,7 @@ import { LoadRunnerInterface } from "./LoadRunnerInterface";
 import { Connector } from "../Connector";
 import { Renderer } from "../Renderer";
 
-export class InitialPropsRunner implements LoadRunnerInterface {
+export class InitialPropsLoadRunner implements LoadRunnerInterface {
   private readonly connector: Connector;
   private initialProps: {};
 
