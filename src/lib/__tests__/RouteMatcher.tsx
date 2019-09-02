@@ -2,24 +2,15 @@ import React from "react";
 import { RouteMatcher } from "../RouteMatcher";
 import { Page, Route } from "../Page";
 import { mount } from "enzyme";
+import { Renderer } from "../Renderer";
 
 test("New instance", () => {
   const routeMatcher = new RouteMatcher();
   expect(routeMatcher.newInstance()).toBeInstanceOf(RouteMatcher);
+  expect.assertions(1);
 });
 
-test("Add route", () => {
-  class IndexPage extends Page<Route<{}>, {}> {
-    component(initialProps: {}) {
-      return <div>Hello, World</div>;
-    }
-  }
-
-  const routeMatcher = new RouteMatcher();
-  routeMatcher.addRoute("/", Promise.resolve(IndexPage));
-});
-
-test("Create renderer", async (done) => {
+test("Add route & Create renderer", async (done) => {
   class IndexPage extends Page<Route<{}>, {}> {
     component(initialProps: {}) {
       return <IndexComponent />;
@@ -35,10 +26,12 @@ test("Create renderer", async (done) => {
   const renderer = await routeMatcher.createRenderer("/");
   expect(renderer).not.toBeUndefined();
   if (!renderer) return;
+  // Fire default callback.
+  expect(renderer.fireRequestCallback()).toBeInstanceOf(Renderer);
   const actual = mount(renderer.getComponent());
   const expected = mount(React.createElement(IndexComponent));
   expect(actual.html()).toBe(expected.html());
-  expect.assertions(2);
+  expect.assertions(3);
   done();
 });
 
@@ -65,10 +58,8 @@ test("Create renderer with request callback", async (done) => {
   const actual = mount(renderer.getComponent());
   const expected = mount(React.createElement(IndexComponent));
   expect(actual.html()).toBe(expected.html());
-
-  renderer.fireRequestCallback();
-
-  expect.assertions(3);
+  expect(renderer.fireRequestCallback()).toBeInstanceOf(Renderer);
+  expect.assertions(4);
   done();
 });
 
