@@ -33,8 +33,8 @@ export class RouteMatcher implements RouteMatcherInterface {
     return new RouteMatcher();
   }
 
-  addRoute(path: string, asyncPageClass: Promise<PageClass>, name?: string) {
-    this.pageInfos.push({ path, asyncPageClass: asyncPageClass });
+  addRoute(path: string, promisePageClass: Promise<PageClass>, name?: string) {
+    this.pageInfos.push({ path, asyncPageClass: promisePageClass });
     if (name) {
       this.nameRoutes[name] = path;
     }

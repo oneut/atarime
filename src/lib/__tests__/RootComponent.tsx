@@ -1,77 +1,45 @@
 import React from "react";
 import { RootComponent } from "../RootComponent";
-import { connector } from "../Facade";
-import { createMemoryHistory } from "history";
-import { Page, Route } from "../Page";
 import { mount } from "enzyme";
-import { asyncFlush } from "../../../test/helpers/Utility";
+import { ComponentResolver } from "../ComponentResolver";
 
 test("Render component", async (done) => {
-  const initializedConnector = connector.newInitializedInstance(
-    createMemoryHistory()
-  );
-
-  // Create test component
-  class IndexPage extends Page<Route<{}>, {}> {
-    component() {
-      return <IndexComponent />;
-    }
-  }
+  const componentResolver = new ComponentResolver();
 
   const IndexComponent = () => {
     return <div>Hello, first page</div>;
   };
 
-  class NextPage extends Page<Route<{}>, {}> {
-    component() {
-      return <NextComponent />;
-    }
-  }
-
   const NextComponent = () => {
     return <div>Hello, next page</div>;
   };
 
-  // RootComponent test
-  initializedConnector
-    .getRouteMatcher()
-    .addRoute("/", Promise.resolve(IndexPage));
-  initializedConnector
-    .getRouteMatcher()
-    .addRoute("/next", Promise.resolve(NextPage));
-
-  initializedConnector.request("/");
-  await asyncFlush();
-
-  const mountedActual = mount(
+  componentResolver.setComponent(IndexComponent);
+  const actual = mount(
     React.createElement(RootComponent, {
-      connector: initializedConnector
+      componentResolver: componentResolver
     })
   );
   const expectedIndexPage = mount(React.createElement(IndexComponent));
-  expect(mountedActual.html()).toBe(expectedIndexPage.html());
+  expect(actual.html()).toBe(expectedIndexPage.html());
 
-  initializedConnector.request("/next");
-  await asyncFlush();
-  mountedActual.update();
+  componentResolver.setComponent(NextComponent).changeState();
+  actual.update();
 
   const expectedNextPage = mount(React.createElement(NextComponent));
-  expect(mountedActual.html()).toBe(expectedNextPage.html());
+  expect(actual.html()).toBe(expectedNextPage.html());
   expect.assertions(2);
   done();
 });
 
 test("Render null", (done) => {
-  const initializedConnector = connector.newInitializedInstance(
-    createMemoryHistory()
-  );
-
-  const mountedActual = mount(
+  const componentResolver = new ComponentResolver();
+  const actual = mount(
     React.createElement(RootComponent, {
-      connector: initializedConnector
+      componentResolver: componentResolver
     })
   );
-  expect(mountedActual.html()).toBeNull();
+  expect(actual.html()).toBeNull();
   expect.assertions(1);
   done();
 });

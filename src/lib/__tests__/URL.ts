@@ -3,100 +3,68 @@ import { URL } from "../URL";
 import { RouteMatcher } from "../RouteMatcher";
 import { ComponentResolver } from "../ComponentResolver";
 import { HistoryManager } from "../HistoryManager";
-
-jest.mock("../HistoryManager");
-jest.mock("../RouteMatcher");
-
-const MockedHistoryManager = HistoryManager as jest.Mock<HistoryManager>;
-const MockedRouteMatcher = RouteMatcher as jest.Mock<RouteMatcher>;
-
-beforeEach(() => {
-  MockedHistoryManager.mockClear();
-  MockedRouteMatcher.mockClear();
-});
+import { createMemoryHistory } from "history";
 
 test("To", () => {
-  expect.assertions(1);
-
-  MockedHistoryManager.mockImplementation((): any => {
-    return {
-      createHref: (pathname: string): string => {
-        expect(pathname).toBe("/test");
-        return pathname;
-      }
-    };
-  });
-
   const connector = new Connector(
-    new MockedHistoryManager(),
+    new HistoryManager(createMemoryHistory()),
     new RouteMatcher(),
     new ComponentResolver()
   );
+
+  jest
+    .spyOn(connector, "createHref")
+    .mockImplementation((pathname: string): string => {
+      expect(pathname).toBe("/test");
+      return "";
+    });
+
   const url = new URL(connector);
+
   url.to("/test");
+  expect.assertions(1);
 });
 
 test("Name", () => {
-  expect.assertions(2);
-
-  MockedHistoryManager.mockImplementation((): any => {
-    return {
-      createHref: (pathname: string): string => {
-        expect(pathname).toBe("/test");
-        return pathname;
-      }
-    };
-  });
-
-  MockedRouteMatcher.mockImplementation((): any => {
-    return {
-      compileByName: (name: string): string => {
-        expect(name).toBe("test");
-        return "/" + name;
-      }
-    };
-  });
-
   const connector = new Connector(
-    new MockedHistoryManager(),
-    new MockedRouteMatcher(),
+    new HistoryManager(createMemoryHistory()),
+    new RouteMatcher(),
     new ComponentResolver()
   );
 
+  jest
+    .spyOn(connector, "createHrefByName")
+    .mockImplementation(
+      (name: string, parameters: { [key: string]: any } = {}): string => {
+        expect(name).toBe("Test");
+        expect(parameters).toStrictEqual({});
+        return "";
+      }
+    );
+
   const url = new URL(connector);
-  url.name("test");
+  url.name("Test");
+  expect.assertions(2);
 });
 
 test("Name with parameters", () => {
-  expect.assertions(3);
-
-  MockedHistoryManager.mockImplementation((): any => {
-    return {
-      createHref: (pathname: string): string => {
-        expect(pathname).toBe("/test");
-        return pathname;
-      }
-    };
-  });
-
-  MockedRouteMatcher.mockImplementation((): any => {
-    return {
-      compileByName: (
-        name: string,
-        parameters: { [key: string]: any }
-      ): string => {
-        expect(name).toBe("test");
-        expect(parameters.test).toBe(1);
-        return "/" + name;
-      }
-    };
-  });
-
   const connector = new Connector(
-    new MockedHistoryManager(),
-    new MockedRouteMatcher(),
+    new HistoryManager(createMemoryHistory()),
+    new RouteMatcher(),
     new ComponentResolver()
   );
+
+  jest
+    .spyOn(connector, "createHrefByName")
+    .mockImplementation(
+      (name: string, parameters: { [key: string]: any } = {}): string => {
+        expect(name).toBe("Test");
+        expect(parameters).toStrictEqual({ id: 1 });
+        return "";
+      }
+    );
+
   const url = new URL(connector);
-  url.name("test", { test: 1 });
+  url.name("Test", { id: 1 });
+  expect.assertions(2);
 });

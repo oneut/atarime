@@ -8,19 +8,15 @@ export class Request {
   }
 
   to(to: string, callback: () => void = () => {}) {
-    this.connector.getHistoryManager().push(this.normalizeTo(to), callback);
+    this.connector.pushHistory(this.normalizeTo(to), callback);
   }
 
-  name(name: string, parameters: any = {}, callback: () => void = () => {}) {
-    const pathname = this.connector
-      .getRouteMatcher()
-      .compileByName(name, parameters);
-    this.connector.getHistoryManager().push(pathname, callback);
+  name(name: string, parameters: {} = {}, callback: () => void = () => {}) {
+    this.connector.pushHistoryByName(name, parameters, callback);
   }
 
   isActive(pathname: string) {
-    const location = this.connector.getHistoryManager().getLocation();
-    return location.pathname === pathname;
+    return this.connector.isCurrentPathname(pathname);
   }
 
   normalizeTo(to: string) {

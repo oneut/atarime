@@ -1,10 +1,13 @@
-import { Subject } from "rxjs";
+import { of, Subject } from "rxjs";
 import { map, mergeMap, skipWhile, switchMap } from "rxjs/operators";
 import { ComponentResolver } from "./ComponentResolver";
 import { HistoryManagerInterface } from "./HistoryManager";
 import { RouteMatcher } from "./RouteMatcher";
 import { Renderer } from "./Renderer";
 import { History } from "history";
+import * as React from "react";
+import { RootComponent } from "./RootComponent";
+import { PageClass } from "./Page";
 
 interface RequestType {
   pathname: string;
@@ -16,7 +19,6 @@ export class Connector {
   private readonly historyManager: HistoryManagerInterface;
   private readonly routeMatcher: RouteMatcher;
   private readonly componentResolver: ComponentResolver;
-  private onStateChange: () => void;
 
   constructor(
     historyManager: HistoryManagerInterface,
@@ -27,24 +29,11 @@ export class Connector {
     this.historyManager = historyManager;
     this.routeMatcher = routeMatcher;
     this.componentResolver = componentResolver;
-    this.onStateChange = () => {};
-  }
-
-  getHistoryManager() {
-    return this.historyManager;
-  }
-
-  getRouteMatcher() {
-    return this.routeMatcher;
-  }
-
-  getComponentResolver() {
-    return this.componentResolver;
   }
 
   newInitializedInstance(history: History) {
     const connector = new Connector(
-      this.historyManager.newInstance(history, this.request.bind(this)),
+      this.historyManager.newInstance(history, this.nextRequest.bind(this)),
       this.routeMatcher.newInstance(),
       new ComponentResolver()
     );
@@ -52,15 +41,113 @@ export class Connector {
     return connector;
   }
 
-  request(pathname: string, callback: () => void = () => {}) {
+  addRoute(path: string, promisePageClass: Promise<PageClass>, name?: string) {
+    this.routeMatcher.addRoute(path, promisePageClass, name);
+  }
+
+  nextRequest(pathname: string, callback: () => void = () => {}) {
     this.stream.next({
       pathname: pathname,
       callback: callback
     });
   }
 
-  subscribe(onStateChange: () => void) {
-    this.onStateChange = onStateChange;
+  pushHistory(to: string, callback: () => void) {
+    this.historyManager.push(to, callback);
+  }
+
+  pushHistoryByName(name: string, parameters: {}, callback: () => void) {
+    const pathname = this.routeMatcher.compileByName(name, parameters);
+    this.historyManager.push(pathname, callback);
+  }
+
+  isCurrentPathname(pathname: string) {
+    const location = this.historyManager.getLocation();
+    return location.pathname === pathname;
+  }
+
+  createHref(pathname: string) {
+    return this.historyManager.createHref(pathname);
+  }
+
+  createHrefByName(name: string, parameters: { [key: string]: any }) {
+    const pathname = this.routeMatcher.compileByName(name, parameters);
+    return this.historyManager.createHref(pathname);
+  }
+
+  run(callback: (Root: React.FunctionComponent<{}>) => void) {
+    const location = this.historyManager.getLocation();
+    of(location.pathname)
+      .pipe(
+        switchMap((pathname) => this.routeMatcher.createRenderer(pathname)),
+        skipWhile((renderer?: Renderer) => renderer === null),
+        map((renderer: Renderer) => renderer.fireInitialPropsWillGet()),
+        mergeMap((renderer: Renderer) => renderer.fireGetInitialProps()),
+        map((renderer: Renderer) => renderer.fireInitialPropsDidGet())
+      )
+      .subscribe((renderer: Renderer) => {
+        this.componentResolver.setComponentFromRenderer(renderer);
+        callback(() => {
+          return React.createElement(RootComponent, {
+            componentResolver: this.componentResolver
+          });
+        });
+      });
+  }
+
+  runWithInitialProps(
+    initialProps: {},
+    callback: (Root: React.FunctionComponent<{}>) => void
+  ) {
+    const location = this.historyManager.getLocation();
+
+    of(location.pathname)
+      .pipe(
+        switchMap((pathname) => this.routeMatcher.createRenderer(pathname)),
+        skipWhile((renderer?: Renderer) => renderer === null),
+        map((renderer: Renderer) => renderer.setInitialProps(initialProps))
+      )
+      .subscribe((renderer) => {
+        this.componentResolver.setComponentFromRenderer(renderer);
+        callback(() => {
+          return React.createElement(RootComponent, {
+            componentResolver: this.componentResolver
+          });
+        });
+      });
+  }
+
+  runWithFirstComponent(
+    firstComponent: React.ComponentType,
+    callback: (Root: React.FunctionComponent<{}>) => void
+  ) {
+    const location = this.historyManager.getLocation();
+    this.nextRequest(location.pathname);
+
+    this.componentResolver.setComponent(firstComponent);
+    callback(() => {
+      return React.createElement(RootComponent, {
+        componentResolver: this.componentResolver
+      });
+    });
+  }
+
+  resolveComponentByPathname(
+    pathname: string,
+    callback: (Root: React.FunctionComponent, initialProps: {}) => void
+  ) {
+    of(pathname)
+      .pipe(
+        switchMap((pathname) => this.routeMatcher.createRenderer(pathname)),
+        skipWhile((renderer?: Renderer) => renderer === null),
+        mergeMap((renderer: Renderer) => renderer.fireGetInitialProps())
+      )
+      .subscribe((renderer) => {
+        const component = renderer.getComponent();
+        callback(() => {
+          return React.createElement(component);
+        }, renderer.getComponentProps());
+      });
   }
 
   private createStream() {
@@ -78,8 +165,7 @@ export class Connector {
         )
       )
       .subscribe((renderer: Renderer) => {
-        this.componentResolver.setComponentFromRenderer(renderer);
-        this.onStateChange();
+        this.componentResolver.setComponentFromRenderer(renderer).changeState();
       });
 
     return stream;

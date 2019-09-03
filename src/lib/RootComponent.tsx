@@ -1,8 +1,8 @@
 import * as React from "react";
-import { Connector } from "./Connector";
+import { ComponentResolver } from "./ComponentResolver";
 
 export interface RootProps {
-  connector: Connector;
+  componentResolver: ComponentResolver;
 }
 
 export class RootComponent<P extends RootProps> extends React.Component<
@@ -10,7 +10,7 @@ export class RootComponent<P extends RootProps> extends React.Component<
 > {
   constructor(props: P) {
     super(props);
-    props.connector.subscribe(this.onStateChange.bind(this));
+    props.componentResolver.subscribe(this.onStateChange.bind(this));
   }
 
   onStateChange() {
@@ -21,9 +21,7 @@ export class RootComponent<P extends RootProps> extends React.Component<
    * Render the matching route.
    */
   render() {
-    const component = this.props.connector
-      .getComponentResolver()
-      .getComponent();
+    const component = this.props.componentResolver.getComponent();
     if (!component) {
       return null;
     }

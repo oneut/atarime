@@ -36,7 +36,7 @@ class Link extends React.Component<InternalLinkType> {
 export function createLink(
   request: Request
 ): React.FunctionComponent<LinkType> {
-  return function LinkHoC(props: LinkType) {
+  return function link(props: LinkType) {
     return <Link request={request} {...props} />;
   };
 }

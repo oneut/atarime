@@ -1,50 +1,42 @@
-import { InitialPropsLoadRunner } from "./runner/InitialPropsLoadRunner";
-import { FirstComponentLoadRunner } from "./runner/FirstComponentLoadRunner";
-import { LoadRunner } from "./runner/LoadRunner";
 import { Connector } from "./Connector";
 import * as React from "react";
 import { PageClass } from "./Page";
+import { RouterInterface } from "../RouterInterface";
 
-export class Router {
+export class Router implements RouterInterface {
   private readonly connector: Connector;
 
   constructor(connector: Connector) {
     this.connector = connector;
   }
 
-  route(path: string, routeClass: PageClass, name?: string) {
-    this.connector
-      .getRouteMatcher()
-      .addRoute(path, Promise.resolve(routeClass), name);
+  route(path: string, pageClass: PageClass, name?: string) {
+    this.connector.addRoute(path, Promise.resolve(pageClass), name);
   }
 
   asyncRoute(
     path: string,
-    asyncPageFunction: () => Promise<PageClass>,
+    asyncPageClassFunction: () => Promise<PageClass>,
     name?: string
   ) {
-    this.connector.getRouteMatcher().addRoute(path, asyncPageFunction(), name);
+    this.connector.addRoute(path, asyncPageClassFunction(), name);
   }
 
-  // @todo
   run(callback: (Root: React.FunctionComponent<{}>) => void) {
-    const runner = new LoadRunner(this.connector);
-    runner.run(callback);
+    this.connector.run(callback);
   }
 
-  runWitInitialProps(
-    initialProps: any,
+  runWithInitialProps(
+    initialProps: {},
     callback: (Root: React.FunctionComponent<{}>) => void
   ) {
-    const runner = new InitialPropsLoadRunner(this.connector, initialProps);
-    runner.run(callback);
+    this.connector.runWithInitialProps(initialProps, callback);
   }
 
   runWithFirstComponent(
     firstComponent: React.ComponentType,
     callback: (Root: React.FunctionComponent<{}>) => void
   ) {
-    const runner = new FirstComponentLoadRunner(this.connector, firstComponent);
-    runner.run(callback);
+    this.connector.runWithFirstComponent(firstComponent, callback);
   }
 }

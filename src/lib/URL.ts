@@ -8,13 +8,10 @@ export class URL {
   }
 
   to(pathname: string) {
-    return this.connector.getHistoryManager().createHref(pathname);
+    return this.connector.createHref(pathname);
   }
 
   name(name: string, parameters: { [key: string]: any } = {}) {
-    const pathname = this.connector
-      .getRouteMatcher()
-      .compileByName(name, parameters);
-    return this.connector.getHistoryManager().createHref(pathname);
+    return this.connector.createHrefByName(name, parameters);
   }
 }

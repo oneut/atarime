@@ -87,3 +87,16 @@ test("Set component from renderer", () => {
   );
   expect(actual.html()).toBe(expected.html());
 });
+
+test("Change State & Subscribe", () => {
+  const componentResolver = new ComponentResolver();
+
+  const checkCallFunction = jest.fn();
+  componentResolver.subscribe(() => {
+    checkCallFunction();
+  });
+
+  componentResolver.changeState();
+  expect(checkCallFunction).toHaveBeenCalled();
+  expect.assertions(1);
+});

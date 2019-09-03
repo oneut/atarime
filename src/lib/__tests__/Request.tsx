@@ -3,166 +3,146 @@ import { Request } from "../Request";
 import { HistoryManager } from "../HistoryManager";
 import { RouteMatcher } from "../RouteMatcher";
 import { ComponentResolver } from "../ComponentResolver";
-import { Page, Route } from "../Page";
-import * as React from "react";
+import { createMemoryHistory } from "history";
 
-jest.mock("../HistoryManager");
-
-const MockedHistoryManager = HistoryManager as jest.Mock<HistoryManager>;
-
-beforeEach(() => {
-  MockedHistoryManager.mockClear();
-});
-
-test("to", () => {
-  MockedHistoryManager.mockImplementation((): any => {
-    return {
-      push: (pathname: string, callback: () => void) => {
-        expect(pathname).toBe("/test");
-        callback();
-      }
-    };
-  });
-
+test("To", () => {
   const connector = new Connector(
-    new MockedHistoryManager(),
+    new HistoryManager(createMemoryHistory()),
     new RouteMatcher(),
     new ComponentResolver()
   );
 
-  // Request test
+  jest
+    .spyOn(connector, "pushHistory")
+    .mockImplementation((to: string, callback: () => void) => {
+      expect(to).toBe("/test");
+      callback();
+    });
+
   const request = new Request(connector);
   request.to("/test");
   expect.assertions(1);
 });
 
-test("to with callback", () => {
-  MockedHistoryManager.mockImplementation((): any => {
-    return {
-      push: (pathname: string, callback: () => void) => {
-        expect(pathname).toBe("/test");
-        callback();
-      }
-    };
-  });
-
+test("To with callback", () => {
   const connector = new Connector(
-    new MockedHistoryManager(),
+    new HistoryManager(createMemoryHistory()),
     new RouteMatcher(),
     new ComponentResolver()
   );
 
-  // Request test
+  jest
+    .spyOn(connector, "pushHistory")
+    .mockImplementation((to: string, callback: () => void) => {
+      expect(to).toBe("/test");
+      callback();
+    });
+
   const request = new Request(connector);
-  const mockRequestCallback = jest.fn();
+  const checkCallback = jest.fn();
   request.to("/test", () => {
-    mockRequestCallback();
+    checkCallback();
   });
-  expect(mockRequestCallback).toHaveBeenCalled();
+  expect(checkCallback).toHaveBeenCalled();
   expect.assertions(2);
 });
 
-test("name", () => {
-  MockedHistoryManager.mockImplementation((): any => {
-    return {
-      push: (pathname: string, callback: () => void) => {
-        expect(pathname).toBe("/");
-        callback();
-      }
-    };
-  });
-
+test("Name", () => {
   const connector = new Connector(
-    new MockedHistoryManager(),
+    new HistoryManager(createMemoryHistory()),
     new RouteMatcher(),
     new ComponentResolver()
   );
 
-  class IndexPage extends Page<Route<{}>, {}> {
-    component(initialProps: {}) {
-      return <div>Hello, World.</div>;
-    }
-  }
+  jest
+    .spyOn(connector, "pushHistoryByName")
+    .mockImplementation(
+      (name: string, parameters: {}, callback: () => void) => {
+        expect(name).toBe("Index");
+        expect(parameters).toStrictEqual({});
+        callback();
+      }
+    );
 
-  connector
-    .getRouteMatcher()
-    .addRoute("/", Promise.resolve(IndexPage), "Index");
-
-  // Request test
   const request = new Request(connector);
   request.name("Index");
-  expect.assertions(1);
-});
-
-test("name with callback", () => {
-  MockedHistoryManager.mockImplementation((): any => {
-    return {
-      push: (pathname: string, callback: () => void) => {
-        expect(pathname).toBe("/");
-        callback();
-      }
-    };
-  });
-
-  const connector = new Connector(
-    new MockedHistoryManager(),
-    new RouteMatcher(),
-    new ComponentResolver()
-  );
-
-  class IndexPage extends Page<Route<{}>, {}> {
-    component(initialProps: {}) {
-      return <div>Hello, World.</div>;
-    }
-  }
-
-  connector
-    .getRouteMatcher()
-    .addRoute("/", Promise.resolve(IndexPage), "Index");
-
-  // Request test
-  const request = new Request(connector);
-  const checkRequestCallback = jest.fn();
-  request.name("Index", {}, () => {
-    checkRequestCallback();
-  });
-
-  expect(checkRequestCallback).toHaveBeenCalled();
   expect.assertions(2);
 });
 
-test("isActive", (done) => {
-  MockedHistoryManager.mockImplementation((): any => {
-    return {
-      getLocation: () => {
-        return {
-          pathname: "/test"
-        };
-      }
-    };
-  });
-
+test("Name with parameters", () => {
   const connector = new Connector(
-    new MockedHistoryManager(),
+    new HistoryManager(createMemoryHistory()),
     new RouteMatcher(),
     new ComponentResolver()
   );
 
-  // Request test
+  jest
+    .spyOn(connector, "pushHistoryByName")
+    .mockImplementation(
+      (name: string, parameters: {}, callback: () => void) => {
+        expect(name).toBe("Index");
+        expect(parameters).toStrictEqual({});
+        callback();
+      }
+    );
+
+  const request = new Request(connector);
+  request.name("Index");
+  expect.assertions(2);
+});
+
+test("Name with callback", () => {
+  const connector = new Connector(
+    new HistoryManager(createMemoryHistory()),
+    new RouteMatcher(),
+    new ComponentResolver()
+  );
+
+  jest
+    .spyOn(connector, "pushHistoryByName")
+    .mockImplementation(
+      (name: string, parameters: {}, callback: () => void) => {
+        expect(name).toBe("Index");
+        expect(parameters).toStrictEqual({});
+        callback();
+      }
+    );
+
+  const request = new Request(connector);
+  const checkCallback = jest.fn();
+  request.name("Index", {}, () => {
+    checkCallback();
+  });
+  expect(checkCallback).toHaveBeenCalled();
+  expect.assertions(3);
+});
+
+test("isActive", () => {
+  const connector = new Connector(
+    new HistoryManager(createMemoryHistory()),
+    new RouteMatcher(),
+    new ComponentResolver()
+  );
+
+  jest
+    .spyOn(connector, "isCurrentPathname")
+    .mockImplementation((pathname: string) => {
+      expect(pathname).toBe("/test");
+      return true;
+    });
+
   const request = new Request(connector);
   expect(request.isActive("/test")).toBeTruthy();
-  expect(request.isActive("/")).toBeFalsy();
-  done();
+  expect.assertions(2);
 });
 
 test("Request path normalized", () => {
   const connector = new Connector(
-    new MockedHistoryManager(),
+    new HistoryManager(createMemoryHistory()),
     new RouteMatcher(),
     new ComponentResolver()
   );
 
-  // Request test
   const request = new Request(connector);
   expect(request.normalizeTo("#/test")).toBe("/test");
   expect(request.normalizeTo("/test")).toBe("/test");

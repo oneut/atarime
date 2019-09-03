@@ -3,18 +3,12 @@ import { mount } from "enzyme";
 import { HistoryManager } from "../HistoryManager";
 import { createMemoryHistory } from "history";
 import { createLink } from "../Link";
-import { RouteMatcher } from "../RouteMatcher";
 import { Request } from "../Request";
 import { Connector } from "../Connector";
 import { ComponentResolver } from "../ComponentResolver";
+import { RouteMatcher } from "../RouteMatcher";
 
-jest.mock("../RouteMatcher");
-
-const MockedRouteMatcher = RouteMatcher as jest.Mock<RouteMatcher>;
-
-test("Link", async (done) => {
-  expect.assertions(4);
-
+test("Link", (done) => {
   (window as any).scrollTo = jest.fn(function(x: number, y: number) {
     expect(x).toBe(0);
     expect(y).toBe(0);
@@ -32,7 +26,7 @@ test("Link", async (done) => {
 
   const connector = new Connector(
     historyManager,
-    new MockedRouteMatcher(),
+    new RouteMatcher(),
     new ComponentResolver()
   );
 
@@ -41,6 +35,6 @@ test("Link", async (done) => {
   const Link = createLink(request);
   const actual = mount(<Link to="/hello">hello, world</Link>);
   expect(actual.html()).toBe('<a href="/hello">hello, world</a>');
-
   actual.find("a").simulate("click");
+  expect.assertions(4);
 });

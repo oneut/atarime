@@ -1,20 +1,17 @@
-import * as lib from "../";
+import * as index from "../";
+import { Router } from "../lib/Router";
+import { Request } from "../lib/Request";
+import ServerRouter from "../ssr/ServerRouter";
+import { URL } from "../lib/URL";
 
 test("Get object", () => {
-  expect(!!lib.createRouter()).toBeTruthy();
-  expect(!!lib.createBrowserHistory()).toBeTruthy();
-  expect(!!lib.createHashHistory()).toBeTruthy();
-  expect(!!lib.createMemoryHistory()).toBeTruthy();
-  expect(!!lib.Link).toBeTruthy();
-  expect(!!lib.Request).toBeTruthy();
-  expect(!!lib.URL).toBeTruthy();
-});
-
-test("Create router", () => {
-  const router = lib.createRouter();
-  expect(router.route).toBeInstanceOf(Function);
-  expect(router.asyncRoute).toBeInstanceOf(Function);
-  expect(router.run).toBeInstanceOf(Function);
-  expect(router.runWitInitialProps).toBeInstanceOf(Function);
-  expect(router.runWithFirstComponent).toBeInstanceOf(Function);
+  expect(index.createRouter()).toBeInstanceOf(Router);
+  expect(index.createBrowserHistory()).toBeInstanceOf(Object);
+  expect(index.createHashHistory()).toBeInstanceOf(Object);
+  expect(index.createMemoryHistory()).toBeInstanceOf(Object);
+  expect(index.Link).toBeInstanceOf(Function);
+  expect(index.Request).toBeInstanceOf(Request);
+  expect(index.URL).toBeInstanceOf(URL);
+  expect(index.SSR.createRouter()).toBeInstanceOf(Router);
+  expect(index.SSR.createServerRouter()).toBeInstanceOf(ServerRouter);
 });

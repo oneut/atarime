@@ -1,190 +1,161 @@
 import React from "react";
 import { mount } from "enzyme";
 import { Router } from "../Router";
-import { Page, Route } from "../Page";
+import { Page, PageClass, Route } from "../Page";
 import { connector } from "../Facade";
 import { createMemoryHistory } from "history";
 import { asyncFlush } from "../../../test/helpers/Utility";
 
-test("Rendering", (done) => {
-  interface InitialProps {
-    message: string;
-  }
-
-  class IndexPage extends Page<Route<{}>, InitialProps> {
-    initialPropsWillGet() {
-      expect(this.route.pathname).toBe("/");
-    }
-
-    async getInitialProps() {
-      expect(this.route.pathname).toBe("/");
-      return {
-        message: "world"
-      };
-    }
-
-    initialPropsDidGet(initialProps: InitialProps) {
-      expect(this.route.pathname).toBe("/");
-      expect(initialProps.message).toBe("world");
-    }
-
-    component(initialProps: InitialProps) {
-      return <IndexComponent message={initialProps.message} />;
-    }
-  }
-
-  const IndexComponent = (props: InitialProps) => {
-    return <div>Hello, {props.message}</div>;
+test("Run", () => {
+  const TestComponent = () => {
+    return <div>Test</div>;
   };
 
-  const router = new Router(
-    connector.newInitializedInstance(createMemoryHistory())
+  const initializedConnector = connector.newInitializedInstance(
+    createMemoryHistory()
   );
+  jest
+    .spyOn(initializedConnector, "run")
+    .mockImplementation(
+      (callback: (Root: React.FunctionComponent<{}>) => void) => {
+        callback(TestComponent);
+      }
+    );
 
-  router.route("/", IndexPage);
-  router.run(async (RootComponent) => {
+  const router = new Router(initializedConnector);
+  router.run((RootComponent) => {
     const actual = mount(<RootComponent />);
-    const expected = mount(
-      React.createElement(IndexComponent, { message: "world" })
-    );
+    const expected = mount(<TestComponent />);
     expect(actual.html()).toBe(expected.html());
-    expect.assertions(5);
-    done();
+    expect.assertions(1);
   });
 });
 
-test("Rendering with first component", async (done) => {
-  interface InitialProps {
-    message: string;
-  }
-
-  class FirstPage extends React.Component {
-    render() {
-      return <div>first page</div>;
-    }
-  }
-
-  class IndexPage extends Page<Route<{}>, InitialProps> {
-    async getInitialProps() {
-      return {
-        message: "world"
-      };
-    }
-
-    component(initialProps: InitialProps) {
-      return <IndexComponent message={initialProps.message} />;
-    }
-  }
-
-  const IndexComponent = (props: InitialProps) => {
-    return <div>Hello, {props.message}</div>;
+test("Run with first component", () => {
+  const FirstComponent = () => {
+    return <div>First</div>;
   };
 
-  const router = new Router(
-    connector.newInitializedInstance(createMemoryHistory())
+  const initializedConnector = connector.newInitializedInstance(
+    createMemoryHistory()
   );
-
-  router.route("/", IndexPage);
-  router.runWithFirstComponent(FirstPage, async (Root) => {
-    // The Router use RxJS to control async/await.
-    // So, First Rendering is null.
-    const mountedActual = mount(<Root />);
-    const firstExpected = mount(<FirstPage />);
-    expect(mountedActual.html()).toBe(firstExpected.html());
-
-    // wait to resolve promise.
-    await asyncFlush();
-
-    mountedActual.update();
-    const expected = mount(<IndexComponent message={"world"} />);
-    expect(mountedActual.html()).toBe(expected.html());
-    expect.assertions(2);
-    done();
-  });
-});
-
-test("Rendering with initial props", (done) => {
-  const mockFn = jest.fn();
-
-  interface InitialProps {
-    items: string[];
-  }
-
-  class IndexPage extends Page<Route<{}>, InitialProps> {
-    static initialPropsWillGet() {
-      expect(mockFn).not.toHaveBeenCalled();
-    }
-
-    static async getInitialProps() {
-      expect(mockFn).not.toHaveBeenCalled();
-    }
-
-    static initialPropsDidGet() {
-      expect(mockFn).not.toHaveBeenCalled();
-    }
-
-    component(initialProps: InitialProps) {
-      return <IndexComponent items={initialProps.items} />;
-    }
-  }
-
-  const IndexComponent = (props: InitialProps) => {
-    return (
-      <div>
-        <h1>Index</h1>
-        <ul>
-          {props.items.map((item, index) => (
-            <li key={index}>{item}</li>
-          ))}
-        </ul>
-      </div>
+  jest
+    .spyOn(initializedConnector, "runWithFirstComponent")
+    .mockImplementation(
+      (
+        firstComponent: React.ComponentType,
+        callback: (Root: React.FunctionComponent<{}>) => void
+      ) => {
+        const actual = mount(React.createElement(firstComponent));
+        const expected = mount(<FirstComponent />);
+        expect(actual.html()).toBe(expected.html());
+        callback(FirstComponent);
+      }
     );
+
+  const router = new Router(initializedConnector);
+  router.runWithFirstComponent(FirstComponent, (Root) => {
+    const actual = mount(<Root />);
+    const expected = mount(<FirstComponent />);
+    expect(actual.html()).toBe(expected.html());
+  });
+  expect.assertions(2);
+});
+
+test("Run with initial props", () => {
+  const TestComponent = () => {
+    return <div>Test</div>;
   };
 
-  const router = new Router(
-    connector.newInitializedInstance(createMemoryHistory())
+  const initializedConnector = connector.newInitializedInstance(
+    createMemoryHistory()
   );
-  router.route("/", IndexPage);
-  router.runWitInitialProps(
+  jest
+    .spyOn(initializedConnector, "runWithInitialProps")
+    .mockImplementation(
+      (
+        initialProps: {},
+        callback: (Root: React.FunctionComponent<{}>) => void
+      ) => {
+        expect(initialProps).toStrictEqual({ items: ["foo", "bar", "baz"] });
+        callback(TestComponent);
+      }
+    );
+
+  const router = new Router(initializedConnector);
+  router.runWithInitialProps(
     { items: ["foo", "bar", "baz"] },
     async (RootComponent) => {
       const actual = mount(React.createElement(RootComponent));
-      const expected = mount(
-        React.createElement(IndexComponent, { items: ["foo", "bar", "baz"] })
-      );
-
+      const expected = mount(React.createElement(TestComponent));
       expect(actual.html()).toBe(expected.html());
-      expect.assertions(1);
-      done();
     }
   );
+  expect.assertions(2);
 });
 
-test("Match single route", (done) => {
+test("Route", (done) => {
   class IndexPage extends Page<Route<{}>, {}> {
     component() {
-      return <IndexComponent />;
+      return <div>Hello, World.</div>;
     }
   }
 
-  const IndexComponent = () => {
-    return <div>Hello, World</div>;
-  };
-
-  const router = new Router(
-    connector.newInitializedInstance(createMemoryHistory())
+  const initializedConnector = connector.newInitializedInstance(
+    createMemoryHistory()
   );
 
-  router.route("/", IndexPage);
-  router.run(async (RootComponent) => {
-    const actual = mount(<RootComponent />);
-    const expected = mount(<IndexComponent />);
-    expect(actual.html()).toBe(expected.html());
-    done();
-  });
+  jest
+    .spyOn(initializedConnector, "addRoute")
+    .mockImplementation(
+      (path: string, promisePageClass: Promise<PageClass>, name?: string) => {
+        expect(path).toBe("/");
+        expect(name).toBe("Index");
+        promisePageClass.then((pageClass) => {
+          expect(new pageClass(new Route({}, "/"))).toBeInstanceOf(IndexPage);
+          done();
+        });
+      }
+    );
+
+  const router = new Router(initializedConnector);
+
+  router.route("/", IndexPage, "Index");
+  expect.assertions(3);
 });
 
-test("Next rendering from Request `to`", (done) => {
+test("Async route", (done) => {
+  class IndexPage extends Page<Route<{}>, {}> {
+    component() {
+      return <div>Hello, World.</div>;
+    }
+  }
+
+  const initializedConnector = connector.newInitializedInstance(
+    createMemoryHistory()
+  );
+
+  jest
+    .spyOn(initializedConnector, "addRoute")
+    .mockImplementation(
+      (path: string, promisePageClass: Promise<PageClass>, name?: string) => {
+        expect(path).toBe("/");
+        expect(name).toBe("Index");
+        promisePageClass.then((pageClass) => {
+          expect(new pageClass(new Route({}, "/"))).toBeInstanceOf(IndexPage);
+          done();
+        });
+      }
+    );
+
+  const router = new Router(initializedConnector);
+
+  // Use promise instead of dynamic import
+  router.asyncRoute("/", () => Promise.resolve(IndexPage), "Index");
+  expect.assertions(3);
+});
+
+test("Route & Run", (done) => {
   interface InitialProps {
     message: string;
   }
@@ -192,7 +163,7 @@ test("Next rendering from Request `to`", (done) => {
   class IndexPage extends Page<Route<{}>, InitialProps> {
     async getInitialProps() {
       return {
-        message: "world"
+        message: "World."
       };
     }
 
@@ -217,12 +188,12 @@ test("Next rendering from Request `to`", (done) => {
     async getInitialProps() {
       expect(this.route.pathname).toBe("/next");
       return {
-        nextMessage: "next world"
+        nextMessage: "Next World!"
       };
     }
 
     initialPropsDidGet(initialProps: NextInitialProps) {
-      expect(initialProps.nextMessage).toBe("next world");
+      expect(initialProps.nextMessage).toBe("Next World!");
     }
 
     component(initialProps: NextInitialProps) {
@@ -245,7 +216,7 @@ test("Next rendering from Request `to`", (done) => {
     // Test up to call renderer.
     const mountedActual = mount(React.createElement(RootComponent));
     const firstExpected = mount(
-      React.createElement(IndexComponent, { message: "world" })
+      React.createElement(IndexComponent, { message: "World." })
     );
     expect(mountedActual.html()).toBe(firstExpected.html());
 
@@ -253,7 +224,7 @@ test("Next rendering from Request `to`", (done) => {
     await asyncFlush();
 
     // next rendering
-    initializedConnector.request("/next");
+    initializedConnector.nextRequest("/next");
 
     // wait to resolve promise.
     await asyncFlush();
@@ -261,47 +232,10 @@ test("Next rendering from Request `to`", (done) => {
     // renderer update
     await mountedActual.update();
     const nextExpected = mount(
-      React.createElement(NextComponent, { nextMessage: "next world" })
+      React.createElement(NextComponent, { nextMessage: "Next World!" })
     );
     expect(mountedActual.html()).toBe(nextExpected.html());
-
     done();
   });
-
   expect.assertions(5);
-});
-
-test("Async route", async (done) => {
-  interface InitialProps {
-    message: string;
-  }
-
-  class DynamicImportPage extends Page<Route<{}>, InitialProps> {
-    async getInitialProps() {
-      return {
-        message: "Dynamic import"
-      };
-    }
-
-    component(initialProps: InitialProps) {
-      return <Component message={initialProps.message} />;
-    }
-  }
-
-  const Component = (props: InitialProps) => {
-    return <div>{props.message}</div>;
-  };
-
-  const router = new Router(
-    connector.newInitializedInstance(createMemoryHistory())
-  );
-
-  // Use promise instead of dynamic import
-  router.asyncRoute("/", () => Promise.resolve(DynamicImportPage));
-  router.run(async (RootComponent) => {
-    const actual = mount(React.createElement(RootComponent));
-    const expected = mount(<Component message={"Dynamic import"} />);
-    expect(actual.html()).toBe(expected.html());
-    done();
-  });
 });
