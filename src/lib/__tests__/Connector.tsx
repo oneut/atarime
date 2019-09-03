@@ -5,7 +5,7 @@ import { RouteMatcher } from "../RouteMatcher";
 import { ComponentResolver } from "../ComponentResolver";
 import { Page, PageClass, Route } from "../Page";
 import React from "react";
-import { asyncFlush } from "../../../test/helpers/Utility";
+import { asyncFlush } from "../../test/helpers/Utility";
 import { mount } from "enzyme";
 
 test("New initialized instance", () => {

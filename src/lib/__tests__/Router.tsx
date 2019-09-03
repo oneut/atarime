@@ -4,7 +4,7 @@ import { Router } from "../Router";
 import { Page, PageClass, Route } from "../Page";
 import { connector } from "../Facade";
 import { createMemoryHistory } from "history";
-import { asyncFlush } from "../../../test/helpers/Utility";
+import { asyncFlush } from "../../test/helpers/Utility";
 
 test("Run", () => {
   const TestComponent = () => {
