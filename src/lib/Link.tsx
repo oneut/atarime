@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Request } from "./Request";
 
-interface LinkType {
+export interface LinkType {
   to: string;
   className?: string;
 }
@@ -36,7 +36,7 @@ class Link extends React.Component<InternalLinkType> {
 export function createLink(
   request: Request
 ): React.FunctionComponent<LinkType> {
-  return function link(props: LinkType) {
+  return function LinkWrapper(props: LinkType) {
     return <Link request={request} {...props} />;
   };
 }

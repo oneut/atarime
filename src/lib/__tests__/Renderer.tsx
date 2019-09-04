@@ -1,7 +1,8 @@
-import { Page, Route } from "../Page";
+import { Page } from "../Page";
 import { Renderer } from "../Renderer";
 import React from "react";
 import { mount } from "enzyme";
+import { Route } from "../Route";
 
 test("Get component", () => {
   class IndexPage extends Page<Route<{}>, {}> {

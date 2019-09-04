@@ -1,9 +1,10 @@
-import { Page, PageClass, Route } from "../../lib/Page";
+import { Page, PageClass } from "../../lib/Page";
 import { connector } from "../../lib/Facade";
 import { createMemoryHistory } from "history";
 import React from "react";
 import ServerRouter from "../ServerRouter";
 import { mount } from "enzyme";
+import { Route } from "../..";
 
 test("Route", (done) => {
   class IndexPage extends Page<Route<{}>, {}> {
@@ -12,9 +13,7 @@ test("Route", (done) => {
     }
   }
 
-  const initializedConnector = connector.newInitializedInstance(
-    createMemoryHistory()
-  );
+  const initializedConnector = connector.initialize(createMemoryHistory());
 
   jest
     .spyOn(initializedConnector, "addRoute")
@@ -42,9 +41,7 @@ test("Async route", (done) => {
     }
   }
 
-  const initializedConnector = connector.newInitializedInstance(
-    createMemoryHistory()
-  );
+  const initializedConnector = connector.initialize(createMemoryHistory());
 
   jest
     .spyOn(initializedConnector, "addRoute")
@@ -74,9 +71,7 @@ test("Resolve component by pathname", () => {
     return <div>Test</div>;
   };
 
-  const initializedConnector = connector.newInitializedInstance(
-    createMemoryHistory()
-  );
+  const initializedConnector = connector.initialize(createMemoryHistory());
   jest
     .spyOn(initializedConnector, "resolveComponentByPathname")
     .mockImplementation(

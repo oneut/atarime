@@ -1,28 +1,35 @@
 import React from "react";
 import { mount } from "enzyme";
 import { Router } from "../Router";
-import { Page, PageClass, Route } from "../Page";
-import { connector } from "../Facade";
+import { Page, PageClass } from "../Page";
 import { createMemoryHistory } from "history";
 import { asyncFlush } from "../../test/helpers/Utility";
+import { Route } from "../Route";
+import { Connector } from "../Connector";
+import { RouteMatcher } from "../RouteMatcher";
+import { ComponentResolver } from "../ComponentResolver";
+import { HistoryManager } from "../HistoryManager";
 
 test("Run", () => {
   const TestComponent = () => {
     return <div>Test</div>;
   };
 
-  const initializedConnector = connector.newInitializedInstance(
-    createMemoryHistory()
+  const connector = new Connector(
+    new HistoryManager(createMemoryHistory()),
+    new RouteMatcher(),
+    new ComponentResolver()
   );
+
   jest
-    .spyOn(initializedConnector, "run")
+    .spyOn(connector, "run")
     .mockImplementation(
       (callback: (Root: React.FunctionComponent<{}>) => void) => {
         callback(TestComponent);
       }
     );
 
-  const router = new Router(initializedConnector);
+  const router = new Router(connector);
   router.run((RootComponent) => {
     const actual = mount(<RootComponent />);
     const expected = mount(<TestComponent />);
@@ -36,11 +43,14 @@ test("Run with first component", () => {
     return <div>First</div>;
   };
 
-  const initializedConnector = connector.newInitializedInstance(
-    createMemoryHistory()
+  const connector = new Connector(
+    new HistoryManager(createMemoryHistory()),
+    new RouteMatcher(),
+    new ComponentResolver()
   );
+
   jest
-    .spyOn(initializedConnector, "runWithFirstComponent")
+    .spyOn(connector, "runWithFirstComponent")
     .mockImplementation(
       (
         firstComponent: React.ComponentType,
@@ -53,7 +63,7 @@ test("Run with first component", () => {
       }
     );
 
-  const router = new Router(initializedConnector);
+  const router = new Router(connector);
   router.runWithFirstComponent(FirstComponent, (Root) => {
     const actual = mount(<Root />);
     const expected = mount(<FirstComponent />);
@@ -67,11 +77,14 @@ test("Run with initial props", () => {
     return <div>Test</div>;
   };
 
-  const initializedConnector = connector.newInitializedInstance(
-    createMemoryHistory()
+  const connector = new Connector(
+    new HistoryManager(createMemoryHistory()),
+    new RouteMatcher(),
+    new ComponentResolver()
   );
+
   jest
-    .spyOn(initializedConnector, "runWithInitialProps")
+    .spyOn(connector, "runWithInitialProps")
     .mockImplementation(
       (
         initialProps: {},
@@ -82,7 +95,7 @@ test("Run with initial props", () => {
       }
     );
 
-  const router = new Router(initializedConnector);
+  const router = new Router(connector);
   router.runWithInitialProps(
     { items: ["foo", "bar", "baz"] },
     async (RootComponent) => {
@@ -101,12 +114,14 @@ test("Route", (done) => {
     }
   }
 
-  const initializedConnector = connector.newInitializedInstance(
-    createMemoryHistory()
+  const connector = new Connector(
+    new HistoryManager(createMemoryHistory()),
+    new RouteMatcher(),
+    new ComponentResolver()
   );
 
   jest
-    .spyOn(initializedConnector, "addRoute")
+    .spyOn(connector, "addRoute")
     .mockImplementation(
       (path: string, promisePageClass: Promise<PageClass>, name?: string) => {
         expect(path).toBe("/");
@@ -118,7 +133,7 @@ test("Route", (done) => {
       }
     );
 
-  const router = new Router(initializedConnector);
+  const router = new Router(connector);
 
   router.route("/", IndexPage, "Index");
   expect.assertions(3);
@@ -131,12 +146,14 @@ test("Async route", (done) => {
     }
   }
 
-  const initializedConnector = connector.newInitializedInstance(
-    createMemoryHistory()
+  const connector = new Connector(
+    new HistoryManager(createMemoryHistory()),
+    new RouteMatcher(),
+    new ComponentResolver()
   );
 
   jest
-    .spyOn(initializedConnector, "addRoute")
+    .spyOn(connector, "addRoute")
     .mockImplementation(
       (path: string, promisePageClass: Promise<PageClass>, name?: string) => {
         expect(path).toBe("/");
@@ -148,7 +165,7 @@ test("Async route", (done) => {
       }
     );
 
-  const router = new Router(initializedConnector);
+  const router = new Router(connector);
 
   // Use promise instead of dynamic import
   router.asyncRoute("/", () => Promise.resolve(IndexPage), "Index");
@@ -205,10 +222,13 @@ test("Route & Run", (done) => {
     return <div>Hello, {props.nextMessage}</div>;
   };
 
-  const initializedConnector = connector.newInitializedInstance(
-    createMemoryHistory()
+  const connector = new Connector(
+    new HistoryManager(createMemoryHistory()),
+    new RouteMatcher(),
+    new ComponentResolver()
   );
-  const router = new Router(initializedConnector);
+
+  const router = new Router(connector);
 
   router.route("/", IndexPage);
   router.route("/next", NextPage);
@@ -224,7 +244,7 @@ test("Route & Run", (done) => {
     await asyncFlush();
 
     // next rendering
-    initializedConnector.nextRequest("/next");
+    connector.nextRequest("/next");
 
     // wait to resolve promise.
     await asyncFlush();

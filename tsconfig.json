@@ -6,7 +6,7 @@
     "target": "es5",
     "lib": ["es6", "dom"],
     "sourceMap": true,
-    "allowJs": true,
+    "allowJs": false,
     "moduleResolution": "node",
     "rootDir": "src",
     "forceConsistentCasingInFileNames": true,
@@ -17,15 +17,16 @@
     "suppressImplicitAnyIndexErrors": true,
     "noUnusedLocals": true,
     "esModuleInterop": true,
-    "jsx": "react"
+    "jsx": "react",
+    "declaration": true
   },
   "exclude": [
     "node_modules",
     "build",
-    "scripts",
-    "acceptance-tests",
-    "webpack",
-    "jest",
-    "src/setupTests.ts"
+    "setupTests.ts",
+    "jest.config.js",
+    "examples",
+    "docs",
+    "coverage"
   ]
 }

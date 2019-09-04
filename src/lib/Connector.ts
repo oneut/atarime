@@ -1,7 +1,7 @@
 import { of, Subject } from "rxjs";
 import { map, mergeMap, skipWhile, switchMap } from "rxjs/operators";
 import { ComponentResolver } from "./ComponentResolver";
-import { HistoryManagerInterface } from "./HistoryManager";
+import { HistoryManager } from "./HistoryManager";
 import { RouteMatcher } from "./RouteMatcher";
 import { Renderer } from "./Renderer";
 import { History } from "history";
@@ -16,12 +16,12 @@ interface RequestType {
 
 export class Connector {
   private readonly stream: Subject<RequestType>;
-  private readonly historyManager: HistoryManagerInterface;
+  private readonly historyManager: HistoryManager;
   private readonly routeMatcher: RouteMatcher;
   private readonly componentResolver: ComponentResolver;
 
   constructor(
-    historyManager: HistoryManagerInterface,
+    historyManager: HistoryManager,
     routeMatcher: RouteMatcher,
     componentResolver: ComponentResolver
   ) {
@@ -31,14 +31,12 @@ export class Connector {
     this.componentResolver = componentResolver;
   }
 
-  newInitializedInstance(history: History) {
-    const connector = new Connector(
-      this.historyManager.newInstance(history, this.nextRequest.bind(this)),
-      this.routeMatcher.newInstance(),
-      new ComponentResolver()
-    );
-    this.historyManager.listen();
-    return connector;
+  initialize(history: History) {
+    this.historyManager
+      .setHistory(history)
+      .setHistoryCallback(this.nextRequest.bind(this))
+      .listen();
+    return this;
   }
 
   addRoute(path: string, promisePageClass: Promise<PageClass>, name?: string) {
@@ -159,7 +157,7 @@ export class Connector {
         ),
         skipWhile((renderer?: Renderer) => renderer === null),
         map((renderer: Renderer) => renderer.fireInitialPropsWillGet()),
-        mergeMap((renderer: Renderer) => renderer.fireGetInitialProps()),
+        switchMap((renderer: Renderer) => renderer.fireGetInitialProps()),
         map((renderer: Renderer) =>
           renderer.fireInitialPropsDidGet().fireRequestCallback()
         )

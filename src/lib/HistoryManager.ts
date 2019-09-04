@@ -5,39 +5,29 @@ type HistoryCallbackInterface = (
   callback: () => void
 ) => void;
 
-export interface HistoryManagerInterface {
-  newInstance(
-    history: History,
-    historyCallback: HistoryCallbackInterface
-  ): HistoryManagerInterface;
-  changeSilent(): void;
-  changeUnsilent(): void;
-  listen(): void;
-  listenCallback(location: Location): void;
-  push(pathname: string, callback: () => void): void;
-  createHref(pathname: string): History.Href;
-  getLocation(): Location;
-}
-
-export class HistoryManager implements HistoryManagerInterface {
-  private readonly history: History;
-  private readonly historyCallback: HistoryCallbackInterface;
+export class HistoryManager {
+  private history: History;
+  private historyCallback: HistoryCallbackInterface;
   private silent: boolean;
 
-  constructor(
-    history: History,
-    historyCallback: HistoryCallbackInterface = (
-      pathname: string,
-      callback: () => void
-    ) => {}
-  ) {
+  constructor(history: History) {
     this.history = history;
-    this.historyCallback = historyCallback;
+    this.historyCallback = (pathname: string, callback: () => void) => {};
     this.silent = false;
   }
 
-  newInstance(history: History, historyCallback: HistoryCallbackInterface) {
-    return new HistoryManager(history, historyCallback);
+  newInstance(history: History) {
+    return new HistoryManager(history);
+  }
+
+  setHistory(history: History) {
+    this.history = history;
+    return this;
+  }
+
+  setHistoryCallback(historyCallback: HistoryCallbackInterface) {
+    this.historyCallback = historyCallback;
+    return this;
   }
 
   changeSilent() {

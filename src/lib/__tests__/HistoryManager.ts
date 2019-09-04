@@ -1,29 +1,35 @@
 import { HistoryManager } from "../HistoryManager";
-import { createMemoryHistory } from "history";
+import { createHashHistory, createMemoryHistory } from "history";
 
 test("New Instance", () => {
-  const historyCallback = (pathname: string, callback: () => void) => {
-    callback();
-  };
-  const historyManager = new HistoryManager(
-    createMemoryHistory(),
-    historyCallback
+  const historyManager = new HistoryManager(createMemoryHistory());
+
+  expect(historyManager.newInstance(createMemoryHistory())).toBeInstanceOf(
+    HistoryManager
   );
-  expect(
-    historyManager.newInstance(createMemoryHistory(), historyCallback)
-  ).toBeInstanceOf(HistoryManager);
   expect.assertions(1);
 });
 
+test("Set history", () => {
+  const historyManager = new HistoryManager(createMemoryHistory());
+  expect(historyManager.setHistory(createHashHistory())).toBeInstanceOf(
+    HistoryManager
+  );
+  expect.assertions(1);
+});
+
+test("Set history callback", () => {
+  // ref. "Push & Listen callback"
+});
+
 test("Change silent", () => {
-  const mockHistoryCallbackFn = jest.fn();
-  const historyCallback = (pathname: string, callback: () => void) => {
-    mockHistoryCallbackFn();
-    callback();
-  };
-  const historyManager = new HistoryManager(
-    createMemoryHistory(),
-    historyCallback
+  const checkCallback = jest.fn();
+  const historyManager = new HistoryManager(createMemoryHistory());
+  historyManager.setHistoryCallback(
+    (pathname: string, callback: () => void) => {
+      checkCallback();
+      callback();
+    }
   );
 
   const location = {
@@ -34,19 +40,19 @@ test("Change silent", () => {
   };
   historyManager.changeSilent();
   historyManager.listenCallback(location);
-  expect(mockHistoryCallbackFn).not.toHaveBeenCalled();
+  expect(checkCallback).not.toHaveBeenCalled();
   expect.assertions(1);
 });
 
 test("Change unsilent", () => {
-  const mockHistoryCallbackFn = jest.fn();
-  const historyCallback = (pathname: string, callback: () => void) => {
-    mockHistoryCallbackFn();
-    callback();
-  };
-  const historyManager = new HistoryManager(
-    createMemoryHistory(),
-    historyCallback
+  const checkCallback = jest.fn();
+  const historyManager = new HistoryManager(createMemoryHistory());
+
+  historyManager.setHistoryCallback(
+    (pathname: string, callback: () => void) => {
+      checkCallback();
+      callback();
+    }
   );
 
   const location = {
@@ -57,52 +63,39 @@ test("Change unsilent", () => {
   };
   historyManager.changeUnsilent();
   historyManager.listenCallback(location);
-  expect(mockHistoryCallbackFn).toHaveBeenCalled();
+  expect(checkCallback).toHaveBeenCalled();
   expect.assertions(1);
 });
 
 test("Push & Listen callback", () => {
-  const historyCallback = (pathname: string, callback: () => void) => {
-    callback();
-  };
-  const historyManager = new HistoryManager(
-    createMemoryHistory(),
-    historyCallback
-  );
-
-  const mockPushCallbackFn = jest.fn();
-  const pushCallback = () => {
-    mockPushCallbackFn();
-  };
-
-  historyManager.push("/", pushCallback);
-  expect(mockPushCallbackFn).toHaveBeenCalled();
-  expect.assertions(1);
-});
-
-test("Push & Listen default callback", () => {
   const historyManager = new HistoryManager(createMemoryHistory());
 
-  const mockPushCallbackFn = jest.fn();
+  historyManager.setHistoryCallback(
+    (pathname: string, callback: () => void) => {
+      callback();
+    }
+  );
+
+  const checkCallback = jest.fn();
   const pushCallback = () => {
-    mockPushCallbackFn();
+    checkCallback();
   };
 
   historyManager.push("/", pushCallback);
-  expect(mockPushCallbackFn).not.toHaveBeenCalled();
+  expect(checkCallback).toHaveBeenCalled();
   expect.assertions(1);
 });
 
 test("Listen", () => {
   const mockHistoryCallbackFn = jest.fn();
-  const historyCallback = (pathname: string, callback: () => void) => {
-    mockHistoryCallbackFn();
-    callback();
-  };
-
   const memoryHistory = createMemoryHistory();
-  const historyManager = new HistoryManager(memoryHistory, historyCallback);
-  historyManager.listen();
+  const historyManager = new HistoryManager(memoryHistory);
+  historyManager
+    .setHistoryCallback((pathname: string, callback: () => void) => {
+      mockHistoryCallbackFn();
+      callback();
+    })
+    .listen();
 
   memoryHistory.push("/");
   expect(mockHistoryCallbackFn).toHaveBeenCalled();
@@ -110,24 +103,14 @@ test("Listen", () => {
 });
 
 test("Create href", () => {
-  const historyManager = new HistoryManager(
-    createMemoryHistory(),
-    (pathname: string, callback: () => void) => {
-      callback();
-    }
-  );
+  const historyManager = new HistoryManager(createMemoryHistory());
 
   expect(historyManager.createHref("/test")).toBe("/test");
   expect.assertions(1);
 });
 
 test("Get location", () => {
-  const historyManager = new HistoryManager(
-    createMemoryHistory(),
-    (pathname: string, callback: () => void) => {
-      callback();
-    }
-  );
+  const historyManager = new HistoryManager(createMemoryHistory());
 
   historyManager.push("/test");
   expect(historyManager.getLocation().pathname).toBe("/test");

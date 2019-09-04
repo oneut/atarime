@@ -1,26 +1,18 @@
 import PathToRegexp from "path-to-regexp";
 import { Renderer } from "./Renderer";
-import { PageClass, Route } from "./Page";
+import { PageClass } from "./Page";
+import { Route } from "./Route";
 
 interface PageInfo {
   path: string;
   asyncPageClass: Promise<PageClass>;
 }
 
-interface RouteMatcherInterface {
-  newInstance(): RouteMatcherInterface;
-  addRoute(path: string, asyncRoute: Promise<PageClass>, name?: string): void;
-  createRenderer(
-    pathname: string,
-    requestCallback: () => void
-  ): Promise<Renderer | null>;
-}
-
 function normalizePathname(pathname: string) {
   return pathname.split("?")[0].split("#")[0];
 }
 
-export class RouteMatcher implements RouteMatcherInterface {
+export class RouteMatcher {
   private readonly pageInfos: Array<PageInfo>;
   private readonly nameRoutes: Record<string, string>;
 

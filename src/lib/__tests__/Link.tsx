@@ -15,14 +15,13 @@ test("Link", (done) => {
     done();
   });
 
-  const historyManager = new HistoryManager(
-    createMemoryHistory(),
-    (pathname, callback) => {
+  const historyManager = new HistoryManager(createMemoryHistory());
+  historyManager
+    .setHistoryCallback((pathname, callback) => {
       expect(pathname).toBe("/hello");
       callback();
-    }
-  );
-  historyManager.listen();
+    })
+    .listen();
 
   const connector = new Connector(
     historyManager,

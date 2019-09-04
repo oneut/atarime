@@ -3,10 +3,11 @@ import { createMemoryHistory } from "history";
 import { HistoryManager } from "../HistoryManager";
 import { RouteMatcher } from "../RouteMatcher";
 import { ComponentResolver } from "../ComponentResolver";
-import { Page, PageClass, Route } from "../Page";
+import { Page, PageClass } from "../Page";
 import React from "react";
 import { asyncFlush } from "../../test/helpers/Utility";
 import { mount } from "enzyme";
+import { Route } from "../Route";
 
 test("New initialized instance", () => {
   const connector = new Connector(
@@ -15,9 +16,7 @@ test("New initialized instance", () => {
     new ComponentResolver()
   );
 
-  expect(
-    connector.newInitializedInstance(createMemoryHistory())
-  ).toBeInstanceOf(Connector);
+  expect(connector.initialize(createMemoryHistory())).toBeInstanceOf(Connector);
   expect.assertions(1);
 });
 

@@ -2,7 +2,8 @@ import React from "react";
 import { ComponentResolver } from "../ComponentResolver";
 import { Renderer } from "../Renderer";
 import { mount } from "enzyme";
-import { Page, Route } from "../Page";
+import { Page } from "../Page";
+import { Route } from "../Route";
 
 test("Default component", () => {
   const componentResolver = new ComponentResolver();
