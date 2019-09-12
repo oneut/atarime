@@ -1,7 +1,7 @@
 import React from "react";
 import { mount } from "enzyme";
-import { HistoryManager } from "../HistoryManager";
 import { createMemoryHistory } from "history";
+import { HistoryManager } from "../HistoryManager";
 import { createLink } from "../Link";
 import { Request } from "../Request";
 import { Connector } from "../Connector";

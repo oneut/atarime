@@ -1,6 +1,6 @@
 import React from "react";
-import { RootComponent } from "../RootComponent";
 import { mount } from "enzyme";
+import { RootComponent } from "../RootComponent";
 import { ComponentResolver } from "../ComponentResolver";
 
 test("Render component", async (done) => {

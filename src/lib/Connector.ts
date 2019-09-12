@@ -1,11 +1,11 @@
 import { of, Subject } from "rxjs";
 import { map, mergeMap, skipWhile, switchMap } from "rxjs/operators";
+import { History } from "history";
+import * as React from "react";
 import { ComponentResolver } from "./ComponentResolver";
 import { HistoryManager } from "./HistoryManager";
 import { RouteMatcher } from "./RouteMatcher";
 import { Renderer } from "./Renderer";
-import { History } from "history";
-import * as React from "react";
 import { RootComponent } from "./RootComponent";
 import { PageClass } from "./Page";
 import { DynamicImport } from "./DynamicImport";

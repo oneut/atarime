@@ -1,9 +1,9 @@
+import { createMemoryHistory } from "history";
 import { Connector } from "../Connector";
 import { URL } from "../URL";
 import { RouteMatcher } from "../RouteMatcher";
 import { ComponentResolver } from "../ComponentResolver";
 import { HistoryManager } from "../HistoryManager";
-import { createMemoryHistory } from "history";
 
 test("To", () => {
   const connector = new Connector(

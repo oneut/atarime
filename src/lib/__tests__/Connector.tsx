@@ -1,12 +1,12 @@
-import { Connector } from "../Connector";
 import { createMemoryHistory } from "history";
+import React from "react";
+import { mount } from "enzyme";
+import { Connector } from "../Connector";
 import { HistoryManager } from "../HistoryManager";
 import { RouteMatcher } from "../RouteMatcher";
 import { ComponentResolver } from "../ComponentResolver";
 import { Page, PageClass } from "../Page";
-import React from "react";
 import { asyncFlush } from "../../test/helpers/Utility";
-import { mount } from "enzyme";
 import { Route } from "../Route";
 
 test("New initialized instance", () => {

@@ -1,7 +1,7 @@
-import { Connector } from "./Connector";
 import * as React from "react";
-import { PageClass } from "./Page";
 import { RouterInterface } from "../RouterInterface";
+import { Connector } from "./Connector";
+import { PageClass } from "./Page";
 import { DynamicImport } from "./DynamicImport";
 
 export class Router implements RouterInterface {
