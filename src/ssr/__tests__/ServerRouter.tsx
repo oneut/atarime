@@ -1,9 +1,9 @@
-import { Page, PageClass } from "../../lib/Page";
-import { connector } from "../../lib/Facade";
 import { createMemoryHistory } from "history";
 import React from "react";
-import ServerRouter from "../ServerRouter";
 import { mount } from "enzyme";
+import { Page, PageClass } from "../../lib/Page";
+import { connector } from "../../lib/Facade";
+import ServerRouter from "../ServerRouter";
 import { Route } from "../..";
 
 test("Route", (done) => {

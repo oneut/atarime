@@ -1,7 +1,7 @@
 import React from "react";
+import { mount } from "enzyme";
 import { RouteMatcher } from "../RouteMatcher";
 import { Page, Route } from "../Page";
-import { mount } from "enzyme";
 import { Renderer } from "../Renderer";
 
 test("New instance", () => {

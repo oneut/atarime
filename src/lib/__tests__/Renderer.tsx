@@ -1,7 +1,7 @@
-import { Page } from "../Page";
-import { Renderer } from "../Renderer";
 import React from "react";
 import { mount } from "enzyme";
+import { Page } from "../Page";
+import { Renderer } from "../Renderer";
 import { Route } from "../Route";
 
 test("Get component", () => {

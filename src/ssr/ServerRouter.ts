@@ -2,6 +2,7 @@ import React from "react";
 import { Connector } from "../lib/Connector";
 import { PageClass } from "../lib/Page";
 import { RouterInterface } from "../RouterInterface";
+import { DynamicImport } from "../lib/DynamicImport";
 
 export default class ServerRouter implements RouterInterface {
   private connector: Connector;
@@ -16,7 +17,7 @@ export default class ServerRouter implements RouterInterface {
 
   asyncRoute(
     path: string,
-    asyncPageClassFunction: () => Promise<PageClass>,
+    asyncPageClassFunction: () => Promise<PageClass | DynamicImport<PageClass>>,
     name?: string
   ) {
     this.connector.addRoute(path, asyncPageClassFunction(), name);

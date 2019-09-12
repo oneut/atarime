@@ -1,8 +1,8 @@
 import React from "react";
 import { mount } from "enzyme";
+import { createMemoryHistory } from "history";
 import { Router } from "../Router";
 import { Page, PageClass } from "../Page";
-import { createMemoryHistory } from "history";
 import { asyncFlush } from "../../test/helpers/Utility";
 import { Route } from "../Route";
 import { Connector } from "../Connector";

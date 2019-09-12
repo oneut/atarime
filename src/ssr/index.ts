@@ -1,7 +1,7 @@
-import ServerRouter from "./ServerRouter";
+import { createBrowserHistory, createMemoryHistory } from "history";
 import { Router } from "../lib/Router";
 import { connector } from "../lib/Facade";
-import { createBrowserHistory, createMemoryHistory } from "history";
+import ServerRouter from "./ServerRouter";
 
 function createRouter() {
   // Settings HistoryManager.

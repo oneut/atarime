@@ -1,3 +1,5 @@
+import { createHashHistory } from "history";
+import * as React from "react";
 import { HistoryManager } from "./HistoryManager";
 import { Request } from "./Request";
 import { RouteMatcher } from "./RouteMatcher";
@@ -5,8 +7,6 @@ import { URL } from "./URL";
 import { createLink, LinkType } from "./Link";
 import { Connector } from "./Connector";
 import { ComponentResolver } from "./ComponentResolver";
-import { createHashHistory } from "history";
-import * as React from "react";
 
 const routeMatcher = new RouteMatcher();
 const historyManager = new HistoryManager(createHashHistory());

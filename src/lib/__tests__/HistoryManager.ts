@@ -1,5 +1,5 @@
-import { HistoryManager } from "../HistoryManager";
 import { createHashHistory, createMemoryHistory } from "history";
+import { HistoryManager } from "../HistoryManager";
 
 test("New Instance", () => {
   const historyManager = new HistoryManager(createMemoryHistory());

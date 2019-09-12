@@ -4,12 +4,15 @@
     "plugin:@typescript-eslint/recommended",
     "plugin:@typescript-eslint/eslint-recommended",
     "plugin:prettier/recommended",
+    "plugin:import/errors",
+    "plugin:import/warnings",
     "prettier/@typescript-eslint",
     "plugin:react/recommended"
   ],
   "plugins": [
     "@typescript-eslint",
-    "react"
+    "react",
+    "import"
   ],
   "parser": "@typescript-eslint/parser",
   "env": {
@@ -29,7 +32,9 @@
     "@typescript-eslint/no-unused-vars": ["error", {
       "vars": "all",
       "args": "none"
-    }]
+    }],
+    "import/no-cycle": 2,
+    "import/order": 2
   },
   "parserOptions": {
     "sourceType": "module",
@@ -40,6 +45,16 @@
   "settings": {
     "react": {
       "version": "detect"
+    },
+    "import/resolver": {
+      "node": {
+        "extensions": [
+          ".js",
+          ".jsx",
+          ".ts",
+          ".tsx"
+        ]
+      }
     }
   }
 }
