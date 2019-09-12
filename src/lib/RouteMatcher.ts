@@ -2,10 +2,11 @@ import PathToRegexp from "path-to-regexp";
 import { Renderer } from "./Renderer";
 import { PageClass } from "./Page";
 import { Route } from "./Route";
+import { DynamicImport, resolveImport } from "./DynamicImport";
 
 interface PageInfo {
   path: string;
-  asyncPageClass: Promise<PageClass>;
+  asyncPageClass: Promise<PageClass | DynamicImport<PageClass>>;
 }
 
 function normalizePathname(pathname: string) {
@@ -25,7 +26,11 @@ export class RouteMatcher {
     return new RouteMatcher();
   }
 
-  addRoute(path: string, promisePageClass: Promise<PageClass>, name?: string) {
+  addRoute(
+    path: string,
+    promisePageClass: Promise<PageClass | DynamicImport<PageClass>>,
+    name?: string
+  ) {
     this.pageInfos.push({ path, asyncPageClass: promisePageClass });
     if (name) {
       this.nameRoutes[name] = path;
@@ -50,12 +55,14 @@ export class RouteMatcher {
           : Number(routeMatch[i]);
       }
 
-      return pageInfo.asyncPageClass.then((PageClass) => {
-        return new Renderer(
-          new PageClass(new Route(params, pathname)),
-          requestCallback
-        );
-      });
+      return resolveImport<PageClass>(pageInfo.asyncPageClass).then(
+        (PageClass) => {
+          return new Renderer(
+            new PageClass(new Route(params, pathname)),
+            requestCallback
+          );
+        }
+      );
     }
 
     return Promise.resolve(null);

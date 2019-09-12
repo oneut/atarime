@@ -8,6 +8,7 @@ import { History } from "history";
 import * as React from "react";
 import { RootComponent } from "./RootComponent";
 import { PageClass } from "./Page";
+import { DynamicImport } from "./DynamicImport";
 
 interface RequestType {
   pathname: string;
@@ -39,7 +40,11 @@ export class Connector {
     return this;
   }
 
-  addRoute(path: string, promisePageClass: Promise<PageClass>, name?: string) {
+  addRoute(
+    path: string,
+    promisePageClass: Promise<PageClass | DynamicImport<PageClass>>,
+    name?: string
+  ) {
     this.routeMatcher.addRoute(path, promisePageClass, name);
   }
 
