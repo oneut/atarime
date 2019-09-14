@@ -1,6 +1,6 @@
 {
   "name": "atarime",
-  "version": "0.0.1",
+  "version": "0.0.0",
   "description": "Client side react router with async. It like next.js!",
   "main": "dist/index.js",
   "scripts": {
