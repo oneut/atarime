@@ -1,6 +1,6 @@
 import React from "react";
 import { render } from "react-dom";
-import { createRouter } from "async-react-router2";
+import { createRouter } from "atarime";
 import "nprogress/nprogress.css";
 import { Home } from "./page/HomePage";
 import { PageIndexPage } from "./page/PageIndexPage";

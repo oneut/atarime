@@ -1,15 +1,19 @@
 {
+  "root": true,
   "extends": [
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
     "plugin:@typescript-eslint/eslint-recommended",
     "plugin:prettier/recommended",
-    "prettier/@typescript-eslint",
-    "plugin:react/recommended"
+    "plugin:react/recommended",
+    "plugin:import/errors",
+    "plugin:import/warnings",
+    "prettier/@typescript-eslint"
   ],
   "plugins": [
     "@typescript-eslint",
-    "react"
+    "react",
+    "import"
   ],
   "parser": "@typescript-eslint/parser",
   "env": {
@@ -25,6 +29,7 @@
       }
     ],
     "@typescript-eslint/explicit-function-return-type": "off",
+    "@typescript-eslint/explicit-member-accessibility": "error",
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/no-unused-vars": [
       "error",
@@ -33,11 +38,23 @@
         "args": "none"
       }
     ],
-    "no-console": "off"
+    "no-console": "off",
+    "import/no-cycle": 2,
+    "import/order": 2
   },
   "settings": {
     "react": {
       "version": "detect"
+    },
+    "import/resolver": {
+      "node": {
+        "extensions": [
+          ".js",
+          ".jsx",
+          ".ts",
+          ".tsx"
+        ]
+      }
     }
   }
 }

@@ -1,22 +1,21 @@
 import * as React from "react";
-import { Page, Route, Link } from "async-react-router2";
+import { Page, Route, Link } from "atarime";
 import NProgress from "nprogress";
 import { sleep } from "../helper";
 
-interface InitialProps {
+type RouteType = Route<{}>;
+
+interface InitialPropsType {
   message: string;
 }
 
-export class Home extends Page<Route<{}>, InitialProps> {
-  initialPropsWillGet() {
+export class Home extends Page<RouteType, InitialPropsType> {
+  public initialPropsWillGet() {
     console.log("initialPropsWillGet() called...");
-    NProgress.remove();
     NProgress.start();
-    NProgress.set(0.0);
-    NProgress.set(0.3);
   }
 
-  async getInitialProps() {
+  public async getInitialProps() {
     console.log("getInitialProps() called...");
     await sleep(1000);
     return {
@@ -24,12 +23,12 @@ export class Home extends Page<Route<{}>, InitialProps> {
     };
   }
 
-  initialPropsDidGet(initialProps: InitialProps) {
+  public initialPropsDidGet(initialProps: InitialPropsType) {
     console.log("initialPropsDidGet() called...");
     NProgress.done();
   }
 
-  component(initialProps: InitialProps) {
+  public component(initialProps: InitialPropsType) {
     return (
       <div>
         <h2>Home</h2>
