@@ -14,8 +14,7 @@
     "commit": "git-cz"
   },
   "files": [
-    "lib",
-    "ssr"
+    "dist"
   ],
   "peerDependencies": {
     "react": "^15.0.0 || ^16.0.0",
@@ -84,7 +83,7 @@
     "next.js",
     "async"
   ],
-  "author": "onetu",
+  "author": "oneut",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/oneut/atarime/issues"
