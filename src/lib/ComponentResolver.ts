@@ -10,6 +10,10 @@ export class ComponentResolver {
     this.onStateChange = () => {};
   }
 
+  newInstance() {
+    return new ComponentResolver();
+  }
+
   setComponentFromRenderer(renderer: Renderer) {
     this.setComponent(renderer.getComponent());
     return this;

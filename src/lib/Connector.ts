@@ -17,9 +17,9 @@ interface RequestType {
 
 export class Connector {
   private readonly stream: Subject<RequestType>;
-  private readonly historyManager: HistoryManager;
-  private readonly routeMatcher: RouteMatcher;
-  private readonly componentResolver: ComponentResolver;
+  private historyManager: HistoryManager;
+  private routeMatcher: RouteMatcher;
+  private componentResolver: ComponentResolver;
 
   constructor(
     historyManager: HistoryManager,
@@ -33,10 +33,12 @@ export class Connector {
   }
 
   initialize(history: History) {
+    this.historyManager = this.historyManager.newInstance(history);
     this.historyManager
-      .setHistory(history)
       .setHistoryCallback(this.nextRequest.bind(this))
       .listen();
+    this.routeMatcher = this.routeMatcher.newInstance();
+    this.componentResolver = this.componentResolver.newInstance();
     return this;
   }
 

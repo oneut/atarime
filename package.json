@@ -1,5 +1,5 @@
 {
-  "name": "async-react-router2",
+  "name": "atarime",
   "version": "0.0.1",
   "description": "Client side react router with async. It like next.js!",
   "main": "dist/index.js",
@@ -53,7 +53,7 @@
     "cz-conventional-changelog": "^2.1.0",
     "enzyme": "^3.6.0",
     "enzyme-adapter-react-16": "^1.5.0",
-    "eslint": "^5.6.0",
+    "eslint": "^6.3.0",
     "eslint-config-prettier": "^6.1.0",
     "eslint-plugin-import": "^2.18.2",
     "eslint-plugin-prettier": "^3.1.0",
@@ -64,7 +64,7 @@
     "react": "^16.5.1",
     "react-dom": "^16.5.1",
     "react-test-renderer": "^16.5.1",
-    "rimraf": "^2.6.2",
+    "rimraf": "^3.0.0",
     "rollup": "^1.20.3",
     "rollup-plugin-babel": "^4.0.3",
     "rollup-plugin-filesize": "^6.2.0",
@@ -76,7 +76,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/oneut/async-react-router.git"
+    "url": "git+https://github.com/oneut/atarime.git"
   },
   "keywords": [
     "react",
@@ -87,9 +87,9 @@
   "author": "onetu",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/oneut/async-react-router/issues"
+    "url": "https://github.com/oneut/atarime/issues"
   },
-  "homepage": "https://github.com/oneut/async-react-router#readme",
+  "homepage": "https://github.com/oneut/atarime#readme",
   "config": {
     "commitizen": {
       "path": "node_modules/cz-conventional-changelog"

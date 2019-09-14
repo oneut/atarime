@@ -1,4 +1,4 @@
-import { createHashHistory } from "history";
+import { createMemoryHistory } from "history";
 import * as React from "react";
 import { HistoryManager } from "./HistoryManager";
 import { Request } from "./Request";
@@ -9,7 +9,7 @@ import { Connector } from "./Connector";
 import { ComponentResolver } from "./ComponentResolver";
 
 const routeMatcher = new RouteMatcher();
-const historyManager = new HistoryManager(createHashHistory());
+const historyManager = new HistoryManager(createMemoryHistory());
 const componentResolver = new ComponentResolver();
 const connector = new Connector(
   historyManager,

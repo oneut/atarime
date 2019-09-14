@@ -9,7 +9,7 @@ export default {
   output: {
     file: "dist/index.js",
     format: "cjs",
-    name: "async-react-router",
+    name: "atarime",
     sourcemap: true
   },
   external: ["history", "path-to-regexp", "react", "rxjs", "rxjs/operators"],
