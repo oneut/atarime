@@ -12,7 +12,7 @@ export const actions = {
 export class ItemsAction {
   private store: Store;
 
-  constructor(store: Store) {
+  public constructor(store: Store) {
     this.store = store;
   }
 

@@ -7,11 +7,11 @@ interface ItemType {
 }
 
 export class User implements ItemType {
-  readonly id: string;
-  readonly karma: number;
-  readonly created: number;
+  public readonly id: string;
+  public readonly karma: number;
+  public readonly created: number;
 
-  constructor(user: UserAttributesInterface) {
+  public constructor(user: UserAttributesInterface) {
     this.id = user.id;
     this.karma = user.karma;
     this.created = user.created;

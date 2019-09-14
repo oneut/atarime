@@ -10,7 +10,7 @@ class HackerNewsApi {
   private readonly api: Firebase.database.Reference;
   private readonly cache: LRU<string, any>;
 
-  constructor() {
+  public constructor() {
     this.displayNumber = 20;
 
     if (!Firebase.apps.length) {
@@ -25,7 +25,7 @@ class HackerNewsApi {
     });
   }
 
-  async getTopStoryItems(page = 1): Promise<ItemAttributesInterface[]> {
+  public async getTopStoryItems(page = 1): Promise<ItemAttributesInterface[]> {
     const ids = await this.getTopStoryItemIds();
     const offset = this.displayNumber * (page - 1);
     const limit = offset + this.displayNumber;
@@ -34,7 +34,7 @@ class HackerNewsApi {
     );
   }
 
-  async getTopStoryItemIds(): Promise<number[]> {
+  public async getTopStoryItemIds(): Promise<number[]> {
     if (this.cache.has("topstories")) return this.cache.get("topstories");
     const snapshot = await this.api.child("/topstories").once("value");
     const value = snapshot.val();
@@ -42,7 +42,7 @@ class HackerNewsApi {
     return value;
   }
 
-  async findItem(id: number): Promise<any> {
+  public async findItem(id: number): Promise<any> {
     if (this.cache.has(`item/${id}`)) return this.cache.get(`item/${id}`);
     const snapshot = await this.api.child(`/item/${id}`).once("value");
     const value = snapshot.val();
@@ -50,7 +50,9 @@ class HackerNewsApi {
     return value;
   }
 
-  async getComments(ids?: number[]): Promise<CommentAttributesInterface[]> {
+  public async getComments(
+    ids?: number[]
+  ): Promise<CommentAttributesInterface[]> {
     if (!ids) {
       return [];
     }
@@ -59,14 +61,16 @@ class HackerNewsApi {
       ids.map(async (id) => await this.findItem(id))
     );
     return await Promise.all(
-      comments.map(async (comment) => {
-        const comments = await this.getComments(comment.kids);
-        return { ...comment, kids: comments };
-      })
+      comments
+        .filter((comment) => comment !== null)
+        .map(async (comment) => {
+          const comments = await this.getComments(comment.kids);
+          return { ...comment, kids: comments };
+        })
     );
   }
 
-  async findUser(id: number): Promise<UserAttributesInterface> {
+  public async findUser(id: number): Promise<UserAttributesInterface> {
     if (this.cache.has(`/user/${id}`)) return this.cache.get(`/user/${id}`);
     const snapshot = await this.api.child(`/user/${id}`).once("value");
     const value = snapshot.val();

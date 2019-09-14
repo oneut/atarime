@@ -1,6 +1,6 @@
 import * as React from "react";
 import { render } from "react-dom";
-import { createRouter } from "async-react-router2";
+import { createRouter } from "atarime";
 import "font-awesome/css/font-awesome.min.css";
 import "nprogress/nprogress.css";
 import "typeface-roboto";

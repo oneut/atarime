@@ -29,6 +29,7 @@
       }
     ],
     "@typescript-eslint/explicit-function-return-type": "off",
+    "@typescript-eslint/explicit-member-accessibility": "error",
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/no-unused-vars": [
       "error",
@@ -38,8 +39,8 @@
       }
     ],
     "no-console": "off",
-    "import/no-cycle": 2,
-    "import/order": 2
+    "import/no-cycle": "error",
+    "import/order": "error"
   },
   "settings": {
     "react": {

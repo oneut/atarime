@@ -1,4 +1,4 @@
-import { Page, Route } from "async-react-router2";
+import { Page, Route } from "atarime";
 import * as React from "react";
 import NProgress from "nprogress";
 import { ItemAttributesInterface } from "../attributes/ItemAttributes";
@@ -19,28 +19,28 @@ interface InitialPropsType {
 }
 
 export default class NewsPage extends Page<RouteType, InitialPropsType> {
-  private module: ModuleInterface;
+  private readonly module: ModuleInterface;
 
-  constructor(route: RouteType) {
+  public constructor(route: RouteType) {
     super(route);
     this.module = configureModule();
   }
 
-  initialPropsWillGet() {
+  public initialPropsWillGet() {
     NProgress.start();
   }
 
-  async getInitialProps() {
+  public async getInitialProps() {
     return {
       items: await hackerNewsApi.getTopStoryItems(this.route.params.page)
     };
   }
 
-  initialPropsDidGet(initialProps: InitialPropsType) {
+  public initialPropsDidGet(initialProps: InitialPropsType) {
     NProgress.done();
   }
 
-  component(initialProps: InitialPropsType) {
+  public component(initialProps: InitialPropsType) {
     if (initialProps.items.length === 0) return <NotFound />;
 
     this.module.actions.items.sync(initialProps.items);

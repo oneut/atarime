@@ -1,19 +1,19 @@
-import { URL } from "async-react-router2";
+import { URL } from "atarime";
 import * as timeago from "timeago.js";
 import { ItemAttributesInterface } from "../attributes/ItemAttributes";
 
 export class Item {
-  readonly by: string;
-  readonly descendants: number;
-  readonly id: number;
-  readonly score: number;
-  readonly time: number;
-  readonly title: string;
-  readonly type: string;
-  readonly url: string;
-  readonly kids?: any;
+  public readonly by: string;
+  public readonly descendants: number;
+  public readonly id: number;
+  public readonly score: number;
+  public readonly time: number;
+  public readonly title: string;
+  public readonly type: string;
+  public readonly url: string;
+  public readonly kids?: any;
 
-  constructor(attributes: ItemAttributesInterface) {
+  public constructor(attributes: ItemAttributesInterface) {
     this.by = attributes.by;
     this.descendants = attributes.descendants;
     this.id = attributes.id;
@@ -25,7 +25,7 @@ export class Item {
     this.kids = attributes.kids;
   }
 
-  getUrl() {
+  public getUrl() {
     if (this.url) {
       return this.url;
     }
@@ -33,7 +33,7 @@ export class Item {
     return URL.name("ItemPage", { itemId: this.id });
   }
 
-  getTimeAgo() {
+  public getTimeAgo() {
     return timeago.format(this.time * 1000);
   }
 }

@@ -11,7 +11,7 @@ export const action = {
 export class ItemAction {
   private store: Store;
 
-  constructor(store: Store) {
+  public constructor(store: Store) {
     this.store = store;
   }
 

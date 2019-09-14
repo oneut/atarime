@@ -1,5 +1,5 @@
 import * as React from "react";
-import { URL, Link } from "async-react-router2";
+import { URL, Link } from "atarime";
 import { ActionsInterface } from "../configureModule";
 import { Item } from "../../../models/Item";
 import { Comment } from "../../../models/Comment";

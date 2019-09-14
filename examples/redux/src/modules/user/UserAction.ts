@@ -10,11 +10,11 @@ export const actions = {
 
 export class UserAction {
   private readonly store: Store;
-  constructor(store: Store) {
+  public constructor(store: Store) {
     this.store = store;
   }
 
-  sync(userAttributes: UserAttributesInterface) {
+  public sync(userAttributes: UserAttributesInterface) {
     this.store.dispatch(actions.sync(userAttributes));
   }
 }

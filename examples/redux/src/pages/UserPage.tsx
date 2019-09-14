@@ -1,4 +1,4 @@
-import { Page, Route } from "async-react-router2";
+import { Page, Route } from "atarime";
 import NProgress from "nprogress";
 import * as React from "react";
 import { hackerNewsApi } from "../api/HackerNewsApi";
@@ -20,26 +20,26 @@ interface InitialPropsType {
 export default class UserPage extends Page<RouteType, InitialPropsType> {
   private readonly module: ModuleInterface;
 
-  constructor(route: RouteType) {
+  public constructor(route: RouteType) {
     super(route);
     this.module = configureModule();
   }
 
-  initialPropsWillGet() {
+  public initialPropsWillGet() {
     NProgress.start();
   }
 
-  async getInitialProps() {
+  public async getInitialProps() {
     return {
       user: await hackerNewsApi.findUser(this.route.params.userId)
     };
   }
 
-  initialPropsDidGet() {
+  public initialPropsDidGet() {
     NProgress.done();
   }
 
-  component(initialProps: InitialPropsType) {
+  public component(initialProps: InitialPropsType) {
     this.module.actions.user.sync(initialProps.user);
     return (
       <this.module.hooks.Provider>

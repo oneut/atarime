@@ -12,7 +12,7 @@ export const action = {
 
 export class CommentsAction {
   private readonly store: Store;
-  constructor(store: Store) {
+  public constructor(store: Store) {
     this.store = store;
   }
 

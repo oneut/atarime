@@ -2,15 +2,15 @@ import * as timeago from "timeago.js";
 import { CommentAttributesInterface } from "../attributes/CommentAttributes";
 
 export class Comment {
-  readonly by: string;
-  readonly id: number;
-  readonly parent: number;
-  readonly text: string;
-  readonly time: number;
-  readonly type: string;
-  readonly kids: Comment[];
+  public readonly by: string;
+  public readonly id: number;
+  public readonly parent: number;
+  public readonly text: string;
+  public readonly time: number;
+  public readonly type: string;
+  public readonly kids: Comment[];
 
-  constructor(commentAttributes: CommentAttributesInterface) {
+  public constructor(commentAttributes: CommentAttributesInterface) {
     this.by = commentAttributes.by;
     this.id = commentAttributes.id;
     this.parent = commentAttributes.parent;
@@ -20,7 +20,7 @@ export class Comment {
     this.kids = commentAttributes.kids.map((comment) => new Comment(comment));
   }
 
-  getTimeAgo() {
+  public getTimeAgo() {
     return timeago.format(this.time);
   }
 }

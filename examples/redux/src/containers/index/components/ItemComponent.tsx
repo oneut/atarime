@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Link, URL } from "async-react-router2";
+import { Link, URL } from "atarime";
 import { Item } from "../../../models/Item";
 
 interface PropsType {
