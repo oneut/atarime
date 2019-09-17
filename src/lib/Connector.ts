@@ -1,5 +1,3 @@
-import { of, Subject } from "rxjs";
-import { map, mergeMap, skipWhile, switchMap } from "rxjs/operators";
 import { History } from "history";
 import * as React from "react";
 import { ComponentResolver } from "./ComponentResolver";
@@ -9,14 +7,10 @@ import { Renderer } from "./Renderer";
 import { RootComponent } from "./RootComponent";
 import { PageClass } from "./Page";
 import { DynamicImport } from "./DynamicImport";
-
-interface RequestType {
-  pathname: string;
-  callback: () => void;
-}
+import { LatestPromiseResolver } from "./LatestPromiseResolver";
 
 export class Connector {
-  private readonly stream: Subject<RequestType>;
+  private readonly latestPromiseResolver: LatestPromiseResolver<Renderer | null>;
   private historyManager: HistoryManager;
   private routeMatcher: RouteMatcher;
   private componentResolver: ComponentResolver;
@@ -26,7 +20,7 @@ export class Connector {
     routeMatcher: RouteMatcher,
     componentResolver: ComponentResolver
   ) {
-    this.stream = this.createStream();
+    this.latestPromiseResolver = this.createLatestPromiseResolver();
     this.historyManager = historyManager;
     this.routeMatcher = routeMatcher;
     this.componentResolver = componentResolver;
@@ -51,10 +45,22 @@ export class Connector {
   }
 
   nextRequest(pathname: string, callback: () => void = () => {}) {
-    this.stream.next({
-      pathname: pathname,
-      callback: callback
-    });
+    this.latestPromiseResolver.next(
+      (async () => {
+        const renderer = await this.routeMatcher.createRenderer(
+          pathname,
+          callback
+        );
+        if (renderer === null) {
+          // @todo NotFound.
+          return null;
+        }
+
+        renderer.fireInitialPropsWillGet();
+        await renderer.fireGetInitialProps();
+        return renderer;
+      })()
+    );
   }
 
   pushHistory(to: string, callback: () => void) {
@@ -81,54 +87,56 @@ export class Connector {
   }
 
   run(callback: (Root: React.FunctionComponent<{}>) => void) {
-    const location = this.historyManager.getLocation();
-    of(location.pathname)
-      .pipe(
-        switchMap((pathname) => this.routeMatcher.createRenderer(pathname)),
-        skipWhile((renderer?: Renderer) => renderer === null),
-        map((renderer: Renderer) => renderer.fireInitialPropsWillGet()),
-        mergeMap((renderer: Renderer) => renderer.fireGetInitialProps()),
-        map((renderer: Renderer) => renderer.fireInitialPropsDidGet())
-      )
-      .subscribe((renderer: Renderer) => {
-        this.componentResolver.setComponentFromRenderer(renderer);
-        callback(() => {
-          return React.createElement(RootComponent, {
-            componentResolver: this.componentResolver
-          });
+    (async () => {
+      const location = this.historyManager.getLocation();
+      const renderer = await this.routeMatcher.createRenderer(
+        location.pathname
+      );
+      if (renderer == null) {
+        // @todo NotFound.
+        return;
+      }
+      renderer.fireInitialPropsWillGet();
+      await renderer.fireGetInitialProps();
+      renderer.fireInitialPropsDidGet();
+      this.componentResolver.setComponentFromRenderer(renderer);
+      callback(() => {
+        return React.createElement(RootComponent, {
+          componentResolver: this.componentResolver
         });
       });
+    })();
   }
 
   runWithInitialProps(
     initialProps: {},
     callback: (Root: React.FunctionComponent<{}>) => void
   ) {
-    const location = this.historyManager.getLocation();
-
-    of(location.pathname)
-      .pipe(
-        switchMap((pathname) => this.routeMatcher.createRenderer(pathname)),
-        skipWhile((renderer?: Renderer) => renderer === null),
-        map((renderer: Renderer) => renderer.setInitialProps(initialProps))
-      )
-      .subscribe((renderer) => {
-        this.componentResolver.setComponentFromRenderer(renderer);
-        callback(() => {
-          return React.createElement(RootComponent, {
-            componentResolver: this.componentResolver
-          });
+    (async () => {
+      const location = this.historyManager.getLocation();
+      const renderer = await this.routeMatcher.createRenderer(
+        location.pathname
+      );
+      if (renderer == null) {
+        // @todo NotFound.
+        return;
+      }
+      renderer.setInitialProps(initialProps);
+      this.componentResolver.setComponentFromRenderer(renderer);
+      callback(() => {
+        return React.createElement(RootComponent, {
+          componentResolver: this.componentResolver
         });
       });
+    })();
   }
 
-  runWithFirstComponent(
+  async runWithFirstComponent(
     firstComponent: React.ComponentType,
     callback: (Root: React.FunctionComponent<{}>) => void
   ) {
     const location = this.historyManager.getLocation();
     this.nextRequest(location.pathname);
-
     this.componentResolver.setComponent(firstComponent);
     callback(() => {
       return React.createElement(RootComponent, {
@@ -141,38 +149,32 @@ export class Connector {
     pathname: string,
     callback: (Root: React.FunctionComponent, initialProps: {}) => void
   ) {
-    of(pathname)
-      .pipe(
-        switchMap((pathname) => this.routeMatcher.createRenderer(pathname)),
-        skipWhile((renderer?: Renderer) => renderer === null),
-        mergeMap((renderer: Renderer) => renderer.fireGetInitialProps())
-      )
-      .subscribe((renderer) => {
-        const component = renderer.getComponent();
-        callback(() => {
-          return React.createElement(component);
-        }, renderer.getComponentProps());
-      });
+    (async () => {
+      const renderer = await this.routeMatcher.createRenderer(pathname);
+      if (renderer == null) {
+        // @todo NotFound.
+        return;
+      }
+      await renderer.fireGetInitialProps();
+      const component = renderer.getComponent();
+      callback(() => {
+        return React.createElement(component);
+      }, renderer.getComponentProps());
+    })();
   }
 
-  private createStream() {
-    const stream = new Subject<RequestType>();
-    stream
-      .pipe(
-        switchMap((request) =>
-          this.routeMatcher.createRenderer(request.pathname, request.callback)
-        ),
-        skipWhile((renderer?: Renderer) => renderer === null),
-        map((renderer: Renderer) => renderer.fireInitialPropsWillGet()),
-        switchMap((renderer: Renderer) => renderer.fireGetInitialProps()),
-        map((renderer: Renderer) =>
-          renderer.fireInitialPropsDidGet().fireRequestCallback()
-        )
-      )
-      .subscribe((renderer: Renderer) => {
-        this.componentResolver.setComponentFromRenderer(renderer).changeState();
-      });
+  private createLatestPromiseResolver() {
+    const latestPromiseResolver = new LatestPromiseResolver<Renderer>();
+    latestPromiseResolver.subscribe(async (renderer: Renderer | null) => {
+      if (renderer === null) {
+        // @todo NotFound.
+        return;
+      }
+      renderer.fireInitialPropsDidGet();
+      renderer.fireRequestCallback();
+      this.componentResolver.setComponentFromRenderer(renderer).changeState();
+    });
 
-    return stream;
+    return latestPromiseResolver;
   }
 }

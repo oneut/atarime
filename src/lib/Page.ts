@@ -1,9 +1,11 @@
 import * as React from "react";
 import { Route, RouteType } from "./Route";
 
-export type PageType<R = any, I = any> = Page<Route<R>, I>;
-
-export type PageClass<R = any, I = any> = new (route: R) => Page<Route<R>, I>;
+export type PageType<R = object, I = object> = Page<Route<R>, I>;
+export type PageClass<R = object, I = object> = new (route: R) => Page<
+  Route<R>,
+  I
+>;
 
 export abstract class Page<R extends RouteType, InitialProps extends {}> {
   constructor(public route: R) {}
