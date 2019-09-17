@@ -1,0 +1,30 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/openjdk:8-jdk-node-browsers
+    steps:
+      - checkout
+      - run:
+          name: Nodejs Version
+          command: node --version
+      - restore_cache:
+          name: Restore node_modules cache
+          key: dependency-cache-{{ .Branch }}-{{ checksum "package.json" }}
+      - run:
+          name: Install dependencies
+          command: npm install
+      - save_cache:
+          key: dependency-cache-{{ .Branch }}-{{ checksum "package.json" }}
+          paths:
+            - ./node_modules
+      - run:
+          name: Lint
+          command: npm run lint
+      - run:
+          name: Test & Coverage
+          command: npm run coverage
+      - run:
+          name: Post Coverage
+          command: cat ./coverage/lcov.info | ./node_modules/.bin/coveralls
+
