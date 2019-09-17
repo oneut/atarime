@@ -67,7 +67,3 @@ examples/**/build
 
 # Test
 coverage
-
-# Develop
-test
-temp
