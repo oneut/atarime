@@ -18,7 +18,7 @@ export function ItemComponent(props: PropsType) {
     props.actions.comments.fetch(props.item.kids).then(() => {
       setIsLoading(false);
     });
-  }, []);
+  }, [props.actions, props.item]);
 
   return (
     <div>
