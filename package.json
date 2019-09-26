@@ -1,0 +1,101 @@
+{
+  "name": "atarime",
+  "version": "0.0.3",
+  "description": "Client side react router with async. It like next.js!",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "rimraf dist && cross-env NODE_ENV=production rollup -c build/rollup.config.js",
+    "lint": "eslint --ext .js,jsx,.ts,.tsx ./src",
+    "lint:fix": "eslint --fix --ext .js,jsx,.ts,.tsx ./src",
+    "prepare": "npm run build",
+    "test": "jest",
+    "coverage": "npm test -- --coverage",
+    "report": "nyc report --reporter=html",
+    "commit": "git-cz"
+  },
+  "files": [
+    "dist"
+  ],
+  "peerDependencies": {
+    "react": "^15.0.0 || ^16.0.0"
+  },
+  "dependencies": {
+    "history": "^4.7.2",
+    "path-to-regexp": "^2.4.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "7.0.0",
+    "@babel/core": "7.0.1",
+    "@babel/plugin-transform-runtime": "^7.0.0",
+    "@babel/preset-env": "7.0.0",
+    "@babel/preset-react": "7.0.0",
+    "@babel/preset-typescript": "^7.3.3",
+    "@babel/register": "7.0.0",
+    "@babel/runtime": "7.0.0",
+    "@types/enzyme": "^3.10.3",
+    "@types/enzyme-adapter-react-16": "^1.0.5",
+    "@types/history": "^4.7.2",
+    "@types/jest": "^24.0.15",
+    "@types/react": "^16.8.23",
+    "@types/react-dom": "^16.8.4",
+    "@typescript-eslint/eslint-plugin": "^2.0.0",
+    "@typescript-eslint/parser": "^2.0.0",
+    "ajv": "^6.5.3",
+    "babel-eslint": "^9.0.0",
+    "babel-plugin-dynamic-import-node": "^2.1.0",
+    "babel-plugin-istanbul": "^5.0.1",
+    "browser-env": "^3.2.5",
+    "commitizen": "^4.0.3",
+    "coveralls": "^3.0.2",
+    "cross-env": "^5.2.0",
+    "cz-conventional-changelog": "^2.1.0",
+    "enzyme": "^3.6.0",
+    "enzyme-adapter-react-16": "^1.5.0",
+    "eslint": "^6.3.0",
+    "eslint-config-prettier": "^6.1.0",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-prettier": "^3.1.0",
+    "eslint-plugin-react": "^7.14.3",
+    "husky": "^3.0.4",
+    "jest": "^24.8.0",
+    "prettier": "^1.18.2",
+    "react": "^16.5.1",
+    "react-dom": "^16.5.1",
+    "react-test-renderer": "^16.5.1",
+    "rimraf": "^3.0.0",
+    "rollup": "^1.20.3",
+    "rollup-plugin-babel": "^4.0.3",
+    "rollup-plugin-filesize": "^6.2.0",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-typescript2": "^0.24.0",
+    "sinon": "^6.3.3",
+    "typescript": "^3.5.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/oneut/atarime.git"
+  },
+  "keywords": [
+    "react",
+    "router",
+    "next.js",
+    "async"
+  ],
+  "author": "oneut",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/oneut/atarime/issues"
+  },
+  "homepage": "https://github.com/oneut/atarime#readme",
+  "config": {
+    "commitizen": {
+      "path": "node_modules/cz-conventional-changelog"
+    }
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run lint",
+      "pre-push": "npm run lint && npm test"
+    }
+  }
+}
